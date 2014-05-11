@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<!-- saved from url=(0058)http://www.cloudcoffee.net:8096/ftutorial/view_chapter/360 -->
+<html lang="en"><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>AliceJS 動畫特效</title>
+<!-- <link type="text/css" rel="stylesheet" href="./動畫特效_files/動畫特效.css"> -->
+	<style type="text/css">
+		body, select		  { font: 8pt Arial, sans-serif; }
+		legend, label, .label { font-weight: bold; }
+		#json				  { width: 99%; height: 200px; }
+		#btnCmd				  { width: 80; }
+		#elem1, #elem2, #elem3{ border: 1px dashed #000; border-radius: 30px;
+								padding: 5px; text-align: center; width: 200px; }
+		#testDiv			  { position: absolute; top: 50px; left: 0; width: 100%; height: 61px; z-index: 1; }
+		#settingsDiv		  { position: relative; top: 20px; width: 650px; height: 780px; z-index: 0; margin: 0 auto; }
+		#bottomBox			  { background-color: #EEE; position: relative; top: 0px;
+								width: 100%; height: 200px; z-index: 0; margin: 0 auto; }
+		#cmdBtn				  { width:9%; }
+		#command			  { width:90%; }
+		#output				  { height:60px; }
+		.x					  { background-color: #EE8 }
+	</style>
+	<script src="./動畫特效_files/jquery-1.7.2.min.js"	></script>
+	<script src="./動畫特效_files/json2.js"				></script>
+	<script src="./動畫特效_files/alice.min.js"			></script>
+	<script src="./動畫特效_files/builder.js"			></script>
+	<script src="./動畫特效_files/actions.js"			></script>
+	<script src="./multiTaskJavascriptEforth.js"		></script>
+    </head><body>
+		<a  href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0CCkQFjAA&url=http%3A%2F%2Fwww.dickbaldwin.com%2Ftocalice.htm&ei=KZpXU7r8OsTlkgXoiYGACg&usg=AFQjCNFAWPxLTNYAIW8cLK7zEWJijVgW2w&sig2=Fvr1obX0oObKQBXM8HzkLw">Alice Programming Tutorial, by Richard G Baldwin</a>
+    	<table width="100%"><tr>
+			<td width="40%"><!-- Test Elements put here -->
+				<div id="testDiv">
+					<div style="padding: 0px;">
+						<div id="container1" style="-webkit-perspective: 1000px; -webkit-perspective-origin-x: 50%; -webkit-perspective-origin-y: 50%;">
+							<div id="elem1" onclick="selectElem(this)" style="-webkit-backface-visibility: visible; -webkit-animation: alice-cheshire-1397885735369-316858 2500ms cubic-bezier(0, 0.35, 0.5, 1.3) 0ms 1 normal running; -webkit-animation-play-state: running; -webkit-transform: rotateY(360deg) rotate(0deg) scale(1);">
+								1<img src="./動畫特效_files/1superman.gif" width="25%" height="25%" alt="">
+							</div>
+							<div id="elem2" onclick="selectElem(this)" style="-webkit-backface-visibility: visible; -webkit-animation: alice-cheshire-1397885735369-316858 2500ms cubic-bezier(0, 0.35, 0.5, 1.3) 0ms 1 normal running; -webkit-animation-play-state: running; -webkit-transform: rotateY(360deg) rotate(0deg) scale(1);">
+								2<img src="./動畫特效_files/2avatar.gif" width="25%" height="25%" alt="">
+							</div>
+							<div id="elem3" onclick="selectElem(this)" style="-webkit-backface-visibility: visible; -webkit-animation: alice-cheshire-1397885735369-316858 2500ms cubic-bezier(0, 0.35, 0.5, 1.3) 0ms 1 normal running; -webkit-animation-play-state: running; -webkit-transform: rotateY(360deg) rotate(0deg) scale(1);">
+								3<img src="./動畫特效_files/3flag.gif" width="25%" height="25%" alt="">
+							</div>
+						</div>
+					</div>
+					<br>
+				</div>
+				<div id="bottomBox"></div>
+			</td><td colspan="2" valign="top" align="center" width="60%">
+				<textarea id="json">&lt;script type="text/javascript"&gt;alicejs.cheshire({"elems": ["elem2"],"delay": {"value": "0ms","randomness": "0%"},"duration": {"value": "2500ms","randomness": "0%"},"timing": "custom","iteration": "1","direction": "normal","playstate": "running","move": "","rotate": "-675%","flip": "right","turns": "1","fade": "","scale": {"from": "1%","to": "100%"},"shadow": "true","overshoot": "0%","perspective": "1000","perspectiveOrigin": "center","backfaceVisibility": "visible"});&lt;/script&gt;
+				</textarea>
+			</td></tr>
+        </table>
+        <input type="button" id="cmdBtn" class="button" value="執行" onclick="exeCmd()">
+        <input id="directOut" type="checkbox">directOut
+        <textarea id="preload" hidden>
+code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨後指令名稱
+  while(token=nxtTkn()){ var i
+    if (i=debugged.indexOf(token)) {
+       debugged=debugged.slice(0,i).concat(debugged.slice(i+1))
+       print('\nremove '+token+' from debugged')
+    } else
+       showErr('\n'+token+' not in debbuged')
+  }
+} end-code
+code debug function(){ //( <指令名稱> -- )// 追加 隨後指令名稱 到 待追蹤陣列
+  while(token=nxtTkn()){
+    if (z=fndWrd(token)){
+       debugged.push(z)
+       print('\nadd '+token+' to debugged')
+    } else
+       showErr('\n'+token+' undefined to debug')
+  }
+} end-code
+code immediate function(){// 定義 指令 immediate		( -- )
+  lstWrd.immediate=1			// 使 最後定義的指令 在高階編譯狀態 能執行
+} end-code
+code compileOnly function(){// 定義 指令 compileOnly	( -- )
+  lstWrd.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
+} end-code
+code // function(){ var n,t// 定義 指令 // (雙斜線) 忽略源碼字串到 列尾
+  iTib += (n= (t=tib.substr(iTib)).indexOf('\n') )>=0 ? n : t.length
+} end-code immediate			// 使 雙斜線 指令 在高階編譯狀態 能執行
+// debug 向左滾動
+        </textarea>
+        <textarea id="command">1,2,3 向右滑入 3000 ms 1,2,3 向左滑入 3000 ms 向右滾動 2 向左滾動 3 向下滑入 3000 ms 3 向上滑入 2 向右滾動 向左滾動
+code ignoreOut function(){
+  this.oldType=this.type, this.type=false
+} end-code ignoreOut
+code resumeOut function(){
+  this.type=this.oldType
+} end-code
+code trace function(){
+  tracing=true
+} end-code
+code untrace function(){
+  tracing=false
+} end-code
+// ////////////////////////////////////////////////////////////////////////
+code : function(){// 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
+  src		= ''			// 高階指令 源碼
+  hSrc		= iTib-2		// 高階指令 源碼字串起點
+  hName		= nxtTkn()		// 高階指令 名稱
+  hXt		= compiledCode.length 	// 高階指令 編碼起點
+  compiling	= 1			// 高階指令 編譯狀態 進入
+} end-code
+code ret function(){// 定義 指令 ret ( -- ) 結束被呼叫的 高階指令
+  ip=rStk.pop()				// 從 return stack 取出 ip
+} end-code compileOnly			// 使 ret 在高階編譯狀態 才編碼
+code ; function () {			// 定義 指令 ; ( -- ) 結束 高階指令的定義
+  compileCode("ret")			// 編譯 ret 為 高階指令 內碼
+  compiling=0				// 高階指令 編譯狀態 結束
+  var src=tib.substring(hSrc,iTib)	// 源碼字串
+  newWrd(hName,hXt,src)			// 以 名稱 內碼起點 原碼字串 定義 高階指令
+} end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行
+// ////////////////////////////////////////////////////////////////////////
+code directOut function(){
+  directOut.checked=true
+} end-code
+code bufferOut function(){
+  directOut.checked=false
+} end-code
+code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的 工作
+  if(directOut) directOut.checked=true
+  while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
+    var w=zWrd(z) 			// 取得指令資訊 w
+    if (w.src) { 			// 若是 高階指令
+       setTimeout(eval(
+	  '(function(){resumeTask('+	// 以 resumeTask 為 起動涵式
+	  JSON.stringify({
+	     rStk:[ip],dStk:[],z:z,ip:w.xt// 設定 起動工作 所需資訊
+	  })+')})'
+       ),10), waiting=1			// 10 毫秒後起動
+       if (tracing)			// 若要顯示 追蹤檢視資訊
+          print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
+             +z+' '+w.name+' '+w.xt+' after 10 ms')
+    } else
+       abort(z+' '+w.name+' not high level to start')
+  }
+} end-code 
+code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)
+  var n=dStk.pop()			// 從 堆頂 取出 n
+  var z=compiledCode[ip++]		// 從 隨後內碼 取 指定位址
+  setTimeout(eval(
+     '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
+     JSON.stringify({
+        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+     })+')})'
+  ),n), waiting=1			// n 毫秒後起動
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
+          +z+' '+zWrd(z).name+' '+ip+' after '+n+' ms')
+} end-code compileOnly
+code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
+  if (compiling) {			// 若是 編議狀態
+     compileCode('(ms)',		// 將 (ms) 編為內碼
+        current+','+
+        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+     ); return
+  }
+  var n=dStk.pop()			// 從 堆頂 取出 n
+  setTimeout(eval(
+     '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
+     iTib+')})'				// 設定 接續工作 源碼位址
+  ),n), waiting=1			// n 毫秒後 接續
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeExec '
+          +iTib+' after '+n+' ms')
+} end-code immediate
+// ////////////////////////////////////////////////////////////////////////
+code (for) function(){
+  rStk.push(dStk.pop())
+} end-code
+code for function(){
+  compileCode('(for)'), dStk.push(compiledCode.length)
+} end-code compileOnly immediate
+code (next) function () {
+  if ( 0 > (--rStk[rStk.length-1]) )
+     ip++, rStk.length--
+  else
+     ip=compiledCode[ip]
+} end-code compileOnly
+code next function () {
+  compileCode('(next)',dStk.pop())
+} end-code compileOnly immediate
+code r@ function () {
+  dStk.push(rStk[rStk.length-1])
+} end-code
+code doLit function(){// 定義 指令 doLit ( -- n ) 將 隨後內碼 n 放上堆疊
+  var n=compiledCode[ip++]	// 取 ip 所指 內碼 n
+  dStk.push(n)			// 將 n 放上堆疊
+} end-code compileOnly		// 使 doLit 在高階編譯狀態 才編碼
+code + function(){
+  var x=dStk.pop(); dStk[dStk.length-1]+=x
+} end-code
+code $" function(){// 定義 $"  取源碼字串直到 " (雙引號)
+  var s=nxtTkn('"')
+  if (compiling) compileCode('doLit',s)
+  else dStk.push(s)
+} end-code immediate
+code . function(){// 定義 . ( n -- ) 印出 堆頂 數字 或 字串
+  print(' '+dStk.pop())
+} end-code
+code (.) function(){// 定義 (.) 列印 隨後內碼
+  print(compiledCode[ip++])
+} end-code compileOnly
+code ." function(){// 定義 ." 列印源碼字串直到 " (雙引號)
+  var s=nxtTkn('"')
+  if (compiling)
+     compileCode('(.)',s)
+  else print(s)
+} end-code immediate
+code cr function(){// 定義 cr 印出 列尾
+  print('\n')
+} end-code
+// ////////////////////////////////////////////////////////////////////////
+// debug 向下滾動 向右滾動 向上滾動 向左滾動 向上旋轉 翻轉飛出 向上旋轉 翻轉飛入
+dbg : a1  3 for 1 向右滑入 3000 ms 1 向下滑入 3000 ms 1 向左滑入 3000 ms 1 向上滑入 3000 ms next ;
+: a2  4 for 2500 ms 2 向下滾動 2500 ms 2 向右滾動 2500 ms 2 向上滾動 2500 ms 2 向左滾動 next ;
+: a3  5 for 2000 ms 3 向上旋轉 2000 ms 3 翻轉飛出 2000 ms 3 向下旋轉 2000 ms 3 翻轉飛入 next ;
+dbg start a1 a2 a3</textarea>
+		<div id="output">右下 參數修訂 後 點左下 特效按鈕 對應 中文指令 將自動更新特效 </div>
+        <!-- Settings -->
+        <div id="settingsDiv" style="height: 653px;">
+            <table border="0" cellpadding="5" cellspacing="0"><tbody><tr>
+				<td valign="top"><fieldset id='group1'><legend>特效</legend>
+					<input type="button" id="effect-drainIn"		value="旋轉飛入"	onclick="clickEffect(this)">
+					<input type="button" id="effect-drainOut"		value="旋轉飛出"	onclick="clickEffect(this);">
+					<input type="button" id="effect-fadeIn"			value="淡入"		onclick="clickEffect(this);">
+					<input type="button" id="effect-fadeOut"		value="淡出"		onclick="clickEffect(this);">
+					<input type="button" id="effect-pageFlipLeft"	value="翻頁(向左)"	onclick="clickEffect(this);">
+					<input type="button" id="effect-pageFlipRight"	value="翻頁(向右)"	onclick="clickEffect(this);">
+					<input type="button" id="effect-pageFlipUp"		value="翻頁(向上)"	onclick="clickEffect(this);">
+					<input type="button" id="effect-pageFlipDown"	value="翻頁(向下)"	onclick="clickEffect(this);">
+					<input type="button" id="effect-phantomZoneIn"	value="翻轉飛入"	onclick="clickEffect(this);">
+					<input type="button" id="effect-phantomZoneOut" value="翻轉飛出"	onclick="clickEffect(this);">
+					<input type="button" id="effect-raceFlag"		value="旗幟揮舞"	onclick="clickEffect(this);">
+					<input type="button" id="effect-slideLeft"		value="向左滑入"	onclick="clickEffect(this);">
+					<input type="button" id="effect-slideRight"		value="向右滑入"	onclick="clickEffect(this);">
+					<input type="button" id="effect-slideUp"		value="向上滑入"	onclick="clickEffect(this);">
+					<input type="button" id="effect-slideDown"		value="向下滑入"	onclick="clickEffect(this);">
+					<input type="button" id="effect-spinLeft"		value="向左旋轉"	onclick="clickEffect(this);">
+                </td><td valign="top"><fieldset id='group2'><legend>特效</legend>
+					<input type="button" id="effect-spinRight"		value="向右旋轉"	onclick="clickEffect(this);">
+					<input type="button" id="effect-spinUp"			value="向上旋轉"	onclick="clickEffect(this);">
+					<input type="button" id="effect-spinDown"		value="向下旋轉"	onclick="clickEffect(this);">
+					<input type="button" id="effect-tossLeft"		value="向左滾動"	onclick="clickEffect(this);">
+					<input type="button" id="effect-tossRight"		value="向右滾動"	onclick="clickEffect(this);">
+					<input type="button" id="effect-tossUp"			value="向上滾動"	onclick="clickEffect(this);">
+					<input type="button" id="effect-tossDown"		value="向下滾動"	onclick="clickEffect(this);">
+					<input type="button" id="effect-twirlFromLeft"	value="對角翻轉向左" onclick="clickEffect(this);">
+					<input type="button" id="effect-twirlFromRight"	value="對角翻轉向右" onclick="clickEffect(this);">
+					<input type="button" id="effect-zoomForward"	value="放大(125%)"	onclick="clickEffect(this);">
+					<input type="button" id="effect-zoomBackward"	value="縮小(75%)"	onclick="clickEffect(this);">
+					<input type="button" id="effect-bounce"			value="彈跳"		onclick="clickEffect(this);"><br>
+					<input type="button" id="effect-dance"			value="跳舞"		onclick="clickEffect(this);">
+					<input type="button" id="effect-hinge"			value="懸掛搖擺"	onclick="clickEffect(this);">
+					<input type="button" id="effect-pendulum"		value="左右搖擺"	onclick="clickEffect(this);">
+					<input type="button" id="effect-wobble"			value="搖晃"		onclick="clickEffect(this);">
+                </td><td valign="top"><fieldset><legend>動畫設定</legend>
+                    <table border="0" cellpadding="5" cellspacing="0"><tbody><tr>
+                        <td align="right">毫秒</td>
+                        <td><input type="text" id="delay1" name="delay" value="0ms" size="4" style="text-align: right;"></td>
+                                </tr>
+                                <tr>
+                                    <td align="right">長短</td>
+                                    <td><input type="text" id="duration1" name="duration" value="2500ms" size="4" style="text-align: right;"></td>
+                                </tr>
+                                <tr>
+                                    <td align="right" valign="top">定時功能</td>
+                                    <td>
+                                        <select id="timing1" name="timing-elem1" size="10">
+                                            <option value="linear">線性</option>
+                                            <option value="ease" selected>ease</option>
+                                            <option value="ease-in">ease-in</option>
+                                            <option value="ease-out">ease-out</option>
+                                            <option value="ease-in-out">ease-in-out</option>
+                                            <option value="easeInQuad">easeInQuad</option>
+                                            <option value="easeInCubic">easeInCubic</option>
+                                            <option value="easeInQuart">easeInQuart</option>
+                                            <option value="easeInQuint">easeInQuint</option>
+                                            <option value="easeInSine">easeInSine</option>
+                                            <option value="easeInExpo">easeInExpo</option>
+                                            <option value="easeInCirc">easeInCirc</option>
+                                            <option value="easeInBack">easeInBack</option>
+                                            <option value="easeOutQuad">easeOutQuad</option>
+                                            <option value="easeOutCubic">easeOutCubic</option>
+                                            <option value="easeOutQuart">easeOutQuart</option>
+                                            <option value="easeOutQuint">easeOutQuint</option>
+                                            <option value="easeOutSine">easeOutSine</option>
+                                            <option value="easeOutExpo">easeOutExpo</option>
+                                            <option value="easeOutCirc">easeOutCirc</option>
+                                            <option value="easeOutBack">easeOutBack</option>
+                                            <option value="easeInOutQuad">easeInOutQuad</option>
+                                            <option value="easeInOutCubic">easeInOutCubic</option>
+                                            <option value="easeInOutQuart">easeInOutQuart</option>
+                                            <option value="easeInOutQuint">easeInOutQuint</option>
+                                            <option value="easeInOutSine">easeInOutSine</option>
+                                            <option value="easeInOutExpo">easeInOutExpo</option>
+                                            <option value="easeInOutCirc">easeInOutCirc</option>
+                                            <option value="easeInOutBack">easeInOutBack</option>
+                                            <option value="custom">自定</option>
+                                            <option value="random">隨機</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">重複次數</td>
+                                    <td><input type="text" id="iteration1" name="iteration" value="1" size="4" style="text-align: right;"></td>
+                                </tr>
+                                <tr>
+                                    <td align="right" valign="top">方向</td>
+                                    <td>
+                                        <select id="direction1" name="direction">
+                                            <option value="normal" selected>正常</option>
+                                            <option value="alternate">相間</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" valign="top">播放狀態</td>
+                                    <td>
+                                        <select id="playstate1" name="playstate1">
+                                            <option value="running" selected>執行</option>
+                                            <option value="paused">暫停</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                    </tbody></table>
+                </td><td valign="top">
+                    <fieldset><legend>自定義設置</legend>
+                            <table border="0" cellpadding="5" cellspacing="0">
+                                <tbody><tr>
+                                    <td align="right" valign="top">移動</td>
+                                    <td>
+                                        <select id="move1" name="move1">
+                                            <option value="">無</option>
+                                            <option value="left" selected>向左</option>
+                                            <option value="right">向右</option>
+                                            <option value="up">向上</option>
+                                            <option value="down">向下</option>
+                                        </select>
+                                    </td>
+                                </tr><tr>
+                                    <td align="right" valign="top">旋轉</td>
+                                    <td>
+                                        <select id="rotate1" name="rotate1">
+                                            <option value="-720%">-720</option>
+                                            <option value="-675%">-675</option>
+                                            <option value="-630%">-630</option>
+                                            <option value="-585%">-585</option>
+                                            <option value="-540%">-540</option>
+                                            <option value="-495%">-495</option>
+                                            <option value="-450%">-450</option>
+                                            <option value="-405%">-405</option>
+                                            <option value="-360%">-360</option>
+                                            <option value="-315%">-315</option>
+                                            <option value="-270%">-270</option>
+                                            <option value="-225%">-225</option>
+                                            <option value="-180%">-180</option>
+                                            <option value="-135%">-135</option>
+                                            <option value="-90%">-90</option>
+                                            <option value="-45%">-45</option>
+                                            <option value="-20%">-20</option>
+                                            <option value="-10%">-10</option>
+                                            <option value="-5%">-5</option>
+                                            <option value="-1%">-1</option>
+                                            <option value="0%" selected>0</option>
+                                            <option value="1%">1</option>
+                                            <option value="5%">5</option>
+                                            <option value="10%">10</option>
+                                            <option value="20%">20</option>
+                                            <option value="45%">45</option>
+                                            <option value="90%">90</option>
+                                            <option value="135%">135</option>
+                                            <option value="180%">180</option>
+                                            <option value="225%">225</option>
+                                            <option value="270%">270</option>
+                                            <option value="315%">315</option>
+                                            <option value="360%">360</option>
+                                            <option value="405%">405</option>
+                                            <option value="450%">450</option>
+                                            <option value="495%">495</option>
+                                            <option value="540%">540</option>
+                                            <option value="585%">585</option>
+                                            <option value="630%">630</option>
+                                            <option value="675%">675</option>
+                                            <option value="720%">720</option>
+                                        </select>
+                                    </td>
+                                </tr><tr>
+                                    <td align="right" valign="top">翻動</td>
+                                    <td>
+                                        <select id="flip1" name="flip1">
+                                            <option value="" selected>無</option>
+                                            <option value="left">向左</option>
+                                            <option value="right">向右</option>
+                                            <option value="up">向上</option>
+                                            <option value="down">向下</option>
+                                        </select>
+                                        <input type="number" id="turns1" name="turns1" min="1" max="10" value="1" step="1" size="2" placeholder="turn(s)">
+                                    </td>
+                                </tr><tr>
+                                    <td align="right" valign="top">淡入淡出</td>
+                                    <td>
+                                        <select id="fade1" name="fade1">
+                                            <option value="" selected>無</option>
+                                            <option value="in">淡入</option>
+                                            <option value="out">淡出</option>
+                                        </select>
+                                    </td>
+                                </tr><tr>
+                                    <td align="right" valign="top">規模</td>
+                                    <td>
+                                        <select id="scaleFrom1" name="scaleFrom1">
+                                            <option value="1%">1</option>
+                                            <option value="10%">10</option>
+                                            <option value="20%">20</option>
+                                            <option value="30%">30</option>
+                                            <option value="40%">40</option>
+                                            <option value="50%">50</option>
+                                            <option value="60%">60</option>
+                                            <option value="70%">70</option>
+                                            <option value="80%">80</option>
+                                            <option value="90%">90</option>
+                                            <option value="100%" selected>100</option>
+                                            <option value="110%">110</option>
+                                            <option value="120%">120</option>
+                                            <option value="130%">130</option>
+                                            <option value="140%">140</option>
+                                            <option value="150%">150</option>
+                                            <option value="160%">160</option>
+                                            <option value="170%">170</option>
+                                            <option value="180%">180</option>
+                                            <option value="190%">190</option>
+                                            <option value="200%">200</option>
+                                        </select>
+                                        <span>到</span>
+                                        <select id="scaleTo1" name="scaleTo1">
+                                            <option value="1%">1</option>
+                                            <option value="10%">10</option>
+                                            <option value="20%">20</option>
+                                            <option value="30%">30</option>
+                                            <option value="40%">40</option>
+                                            <option value="50%">50</option>
+                                            <option value="60%">60</option>
+                                            <option value="70%">70</option>
+                                            <option value="80%">80</option>
+                                            <option value="90%">90</option>
+                                            <option value="100%" selected>100</option>
+                                            <option value="110%">110</option>
+                                            <option value="120%">120</option>
+                                            <option value="130%">130</option>
+                                            <option value="140%">140</option>
+                                            <option value="150%">150</option>
+                                            <option value="160%">160</option>
+                                            <option value="170%">170</option>
+                                            <option value="180%">180</option>
+                                            <option value="190%">190</option>
+                                            <option value="200%">200</option>
+                                        </select>
+                                        <input type="checkbox" id="shadow1" name="shadow1" alt="Shadow" title="Shadow" checked="">
+                                    </td>
+                                </tr><tr>
+                                    <td align="right" valign="top">過衝</td>
+                                    <td>
+                                        <select id="overshoot1" name="overshoot1">
+                                            <option value="0%" selected>0</option>
+                                            <option value="10%">10</option>
+                                            <option value="20%">20</option>
+                                            <option value="30%">30</option>
+                                            <option value="40%">40</option>
+                                            <option value="50%">50</option>
+                                            <option value="60%">60</option>
+                                            <option value="70%">70</option>
+                                            <option value="80%">80</option>
+                                            <option value="90%">90</option>
+                                            <option value="100%">100</option>
+                                        </select>
+                                    </td>
+                                </tr><tr>
+                                    <td align="right" valign="top">隨機</td>
+                                    <td>
+                                        <select id="randomness1" name="randomness1">
+                                            <option value="0%" selected>0</option>
+                                            <option value="10%">10</option>
+                                            <option value="20%">20</option>
+                                            <option value="30%">30</option>
+                                            <option value="40%">40</option>
+                                            <option value="50%">50</option>
+                                            <option value="60%">60</option>
+                                            <option value="70%">70</option>
+                                            <option value="80%">80</option>
+                                            <option value="90%">90</option>
+                                            <option value="100%">100</option>
+                                        </select>
+                                    </td>
+                                </tr></tbody>
+                            </table>
+                        </fieldset>
+                </td><td valign="top">
+                    <fieldset><legend>3D 設定</legend>
+                        <table border="0" cellpadding="5" cellspacing="0">
+                                <tbody><tr>
+                                    <td align="right" valign="top">透視(px)</td>
+                                    <td>
+                                        <select id="perspective1" name="perspective1">
+                                            <option value="none">無</option>
+                                            <option value="100">100</option>
+                                            <option value="250">250</option>
+                                            <option value="500">500</option>
+                                            <option value="750">750</option>
+                                            <option value="1000" selected>1000</option>
+                                            <option value="1500">1500</option>
+                                            <option value="1750">1750</option>
+                                            <option value="2000">2000</option>
+                                        </select>
+                                    </td>
+                                </tr><tr>
+                                    <td align="right" valign="top">透視起源</td>
+                                    <td>
+                                        <select id="perspective_origin1" name="perspective_origin1">
+                                            <option value="top-left">上-左</option>
+                                            <option value="top">上</option>
+                                            <option value="top-right">上-右</option>
+                                            <option value="left">左</option>
+                                            <option value="center" selected>中央</option>
+                                            <option value="right">右</option>
+                                            <option value="bottom-left">下-左</option>
+                                            <option value="bottom">下</option>
+                                            <option value="bottom-right">下-右</option>
+                                            <option value="custom">自定</option>
+                                        </select><br>
+                                        <input type="number" id="perspectiveOriginX-setting" step="50" min="-400" max="400" value="" size="2" placeholder="x%" style="display: none;">
+                                        <input type="number" id="perspectiveOriginY-setting" step="50" min="-400" max="400" value="" size="2" placeholder="y%" style="display: none;">
+                                    </td>
+                                </tr><tr>
+                                    <td align="right" valign="top">背面能見度</td>
+                                    <td>
+                                        <select id="backface_visibility1" name="backface_visibility1">
+                                            <option value="visible" selected>可見</option>
+                                            <option value="hidden">隱藏</option>
+                                        </select>
+                                    </td>
+                                </tr></tbody>
+                            </table>
+                </td></tr>
+            </tbody></table>
+        </div>
+        </div>
+	<script>
+        settingsDiv.style.height = parseInt((window.innerHeight - testDiv.clientHeight), 10) + "px"
+        perspective_origin1.addEventListener("change", function () {
+            app.handleChange(this, ['perspectiveOriginX-setting', 'perspectiveOriginY-setting'])
+        }, false)
+		app.run=function(src){ return eval(src) }
+	//////////////////////////////////////////////////////////////////////////////////////////////////////																								//
+		var VM = new eForthVM1(), buf=''			// get VM												//
+        function type(msg){ 
+        	buf+=msg 		// give VM an output function
+        	if (directOut.checked)
+        		dumpBuf()
+        }
+        function dumpBuf(){
+        	output.innerHTML+=buf, buf=''
+        }
+	//	VM.type=type
+	//	VM.dumpBuf=dumpBuf
+		var iElem = 1									// initially set superman as default			//
+		var $elem = $('#elem1'); $elem.addClass('x')													//
+		function getAdjustment() {
+			return {
+				delay				: { value:    delay1.value, randomness: randomness1.value },
+				duration			: { value: duration1.value, randomness: randomness1.value },
+				timing				: timing1.value,
+				iteration			: iteration1.value,
+				direction			: direction1.value,
+				playstate			: playstate1.value,
+				move				: move1.value,
+				rotate				: rotate1.value,
+				flip				: flip1.value,
+				turns				: turns1.value,
+				fade				: fade1.value,
+				scale				: { from: scaleFrom1.value, to: scaleTo1.value },
+				shadow				: shadow1.checked,
+				overshoot			: overshoot1.value,
+				perspective			: perspective1.value,
+				perspectiveOrigin	: perspective_origin1.value,
+				backfaceVisibility	: backface_visibility1.value
+			}
+		}
+		window.effect={}
+		//'向右滑入':{a:'slide',o:{"elems": ["elem1","elem2","elem3"],"move": "right","overshoot": "0%","duration": {"value": "2500ms","randomness": "0%"},"timing": "ease","delay": {"value": "0ms","randomness": "0%"},"iteration": "1","direction": "normal","playstate": "running"}}
+		function applyEffect(n,i) {
+			i=i||iElem 
+			var ntype=n.type, b
+			if (ntype==='button'){ b=n, n=n.value }
+			var elem
+			var p=getAdjustment(elem), a=actions[n], ap=a.p, ao=a.o, aa=a.a||'cheshire'
+			p.elems=elem=eval('elem'+i)
+			for (var x in ap) {
+				var apx=ap[x]
+				try{
+					eval('p[x]=apx')
+				}
+				catch(e){
+					p[x]=apx
+				}
+			}
+			var o='({'+ao.map(function(x){
+				return x+': p.'+x
+			}).join(', ')+'})'
+			o=eval(o)
+			var ret="alicejs."+aa+"("+app.serialize(o)+")"
+			ret=ret.replace(/"elems": \[.+?\]/,'"elems": ['+
+				(Array.isArray(i)?i:[i]).map(function(x){
+					return '"elem'+x+'"'
+				})+']')
+			eval(ret)
+			if(!effect[n])effect[n]={a:aa,o:app.serialize(o)}
+			return {a:"alicejs."+aa,o:o}
+		}
+	//////////////////////////////////////////////////////////////////////////////////////////
+		function selectElem(x) { var i=parseInt(x.id.substr(x.id.length-1))					//
+			if (i===iElem) return															//
+			iElem = i																		//
+			$elem.removeClass('x')															//
+			$elem = $('#'+x.id); $elem.addClass('x')										//
+		}																					//
+		function makeWords(g) { g=g.children												//
+			for (var i=1; i<g.length; i++) { var n=g[i].value
+			    if (n) {								//
+					var r=applyEffect(n,1), t
+					t='code '+n+' function(){\n'
+					+'var o=dStk.pop()||iElem, e=effect["'+n+'"]\n'
+					+'var elem=(Array.isArray(o)?o:[o]).map(function(x){\n'
+					+"\treturn '\"elem'+x+'\"'\n"
+					+'}).join()\n'
+					 
+					+'var t=e.o.replace(/"elems": \\[.+?\\]/,\n'
+					+"\"'elems': [\"+elem+\"]\")\n"
+					
+					+'eval(\'alicejs.\'+e.a+\'(\'+t+\')\')\n'
+					+'} end-code'
+					VM.exec(t)	//
+				}
+			}																				//
+		}																					//
+		makeWords(group1), makeWords(group2)	/* 兩組特效自動產生中文指令	*/				//
+		VM.exec("code ms function() {													\n"+//
+		"	setTimeout(resumeExec,dStk.pop()), waiting=1 // 取堆疊毫秒數設定後 暫停工作	\n"+//
+		"} end-code																	  	  ")//
+		VM.exec(preload.value)
+		buf=''
+		var i=0, v=VM.getVocs()																//
+		var w=v[0].wrds.map(function(w){													//
+			return w?((++i)+'.'+w.name):''													//
+		})																					//
+		output.innerHTML+='(下列指令 可用於 執行)<br>'+w.join(' ')+'<br>'					//
+		var exeCmd=function () {															//
+			VM.exec(command.value)															//
+		//	if (buf) dumpBuf()																//
+		}																					//
+		$effect=0																			//
+		function clickEffect(b/*button*/) {var n=b.value/*name*/, a/*action*/				//
+			if ($effect){																	//
+				$($effect).removeClass('x')						/*原指定特效取消標記*/		//
+				var a=actions[$effect.value], p=a.p, o=a.o									//
+				o.map(function(x) {															//
+					if(x!=='elems'&&!p[x])													//
+						$('#'+x+'1').removeClass('x')			/*相關設定參數取消標記*/	//
+				})																			//
+			}																				//
+			json.value='<script>'+applyEffect(n,iElem)+'<\/script>'							//
+			$effect=$('#'+b.id)[0], $($effect).addClass('x')	/*新指定特效加上標記*/		//
+			a=actions[$effect.value], p=a.p, o=a.o											//
+			o.map(function(x) {																//
+				if(x!=='elems'&&!p[x])$('#'+x+'1').addClass('x')/*相關設定參數加上標記*/	//
+			})																				//
+		}																					//
+	//////////////////////////////////////////////////////////////////////////////////////////
+	</script>
+</body></html>
