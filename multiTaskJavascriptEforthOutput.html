@@ -1,0 +1,225 @@
+<html><head>
+<!-- multiTaskJavascriptEforthOutput.html -->
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	 <title>multi task jeforth demo output</title>
+	 <link type="text/css" rel="stylesheet" href="multiTaskJavascriptEforthOutput.css">
+</head><body>
+	 <pre>init Fri May 09 2014 12:17:12 GMT+0800 (台北標準時間)
+topic "multiTask" of length 5260
+eval Fri May 09 2014 12:17:15 GMT+0800 (台北標準時間)
+<inp>code immediate function(){// 定義 指令 immediate		( -- )</inp> <inp>
+  lstWrd.immediate=1			// 使 最後定義的指令 在高階編譯狀態 能執行
+} end-code</inp> <wrn>
+word defined at 0,4</wrn> <ok>ok</ok>
+<inp>code compileOnly function(){// 定義 指令 compileOnly	( -- )</inp> <inp>
+  lstWrd.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
+} end-code</inp> <wrn>
+word defined at 0,5</wrn> <ok>ok</ok>
+<inp>code // function(){ var n,t// 定義 指令 // (雙斜線) 忽略源碼字串到 列尾</inp> <inp>
+  iTib += (n= (t=tib.substr(iTib)).indexOf('\n') )&gt;=0 ? n : t.length
+} end-code immediate			// 使 雙斜線 指令 在高階編譯狀態 能執行</inp> <wrn>
+word defined at 0,6</wrn> <ok>ok</ok>
+<inp>// ////////////////////////////////////////////////////////////////////////</inp>  <ok>ok</ok>
+<inp>code : function(){// 定義 指令 : ( &lt;指令名稱&gt; -- ) 開始 高階指令的定義</inp> <inp>
+  src		= ''			// 高階指令 源碼
+  hSrc		= iTib-2		// 高階指令 源碼字串起點
+  hName		= nxtTkn()		// 高階指令 名稱
+  hXt		= compiledCode.length 	// 高階指令 編碼起點
+  compiling	= 1			// 高階指令 編譯狀態 進入
+} end-code</inp> <wrn>
+word defined at 0,7</wrn> <ok>ok</ok>
+<inp>code ret function(){// 定義 指令 ret ( -- ) 結束被呼叫的 高階指令</inp> <inp>
+  ip=rStk.pop()				// 從 return stack 取出 ip
+} end-code compileOnly			// 使 ret 在高階編譯狀態 才編碼</inp> <wrn>
+word defined at 0,8</wrn> <ok>ok</ok>
+<inp>code ; function () {			// 定義 指令 ; ( -- ) 結束 高階指令的定義</inp> <inp>
+  compileCode("ret")			// 編譯 ret 為 高階指令 內碼
+  compiling=0				// 高階指令 編譯狀態 結束
+  var src=tib.substring(hSrc,iTib)	// 源碼字串
+  newWrd(hName,hXt,src)			// 以 名稱 內碼起點 原碼字串 定義 高階指令
+} end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行</inp> <wrn>
+word defined at 0,9</wrn> <ok>ok</ok>
+<inp>// ////////////////////////////////////////////////////////////////////////</inp>  <ok>ok</ok>
+<inp>code directOut function(){</inp> <inp>
+  directOut.checked=true
+} end-code</inp> <wrn>
+word defined at 0,10</wrn> <ok>ok</ok>
+<inp>code bufferOut function(){</inp> <inp>
+  directOut.checked=false
+} end-code</inp> <wrn>
+word defined at 0,11</wrn> <ok>ok</ok>
+<inp>code start function(){//( &lt;指令&gt; -- )// 隨後 高階指令 設為要起動的 工作</inp> <inp>
+  directOut.checked=true
+  while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
+    var w=zWrd(z) 			// 取得指令資訊 w
+    if (w.src) { 			// 若是 高階指令
+       setTimeout(eval(
+	  '(function(){resumeTask('+	// 以 resumeTask 為 起動涵式
+	  JSON.stringify({
+	     rStk:[ip],dStk:[],z:z,ip:w.xt// 設定 起動工作 所需資訊
+	  })+')})'
+       ),10), waiting=1			// 10 毫秒後起動
+       if (tracing)			// 若要顯示 追蹤檢視資訊
+          print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
+             +z+' '+w.name+' '+w.xt+' after 10 ms')
+    } else
+       abort(z+' '+w.name+' not high level to start')
+  }
+} end-code </inp> <wrn>
+word defined at 0,12</wrn> <ok>ok</ok>
+<inp>code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)</inp> <inp>
+  var n=dStk.pop()			// 從 堆頂 取出 n
+  var z=compiledCode[ip++]		// 從 隨後內碼 取 指定位址
+  setTimeout(eval(
+     '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
+     JSON.stringify({
+        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+     })+')})'
+  ),n), waiting=1			// n 毫秒後起動
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
+          +z+' '+zWrd(z).name+' '+ip+' after '+n+' ms')
+} end-code compileOnly</inp> <wrn>
+word defined at 0,13</wrn> <ok>ok</ok>
+<inp>code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)</inp> <inp>
+  if (compiling) {			// 若是 編議狀態
+     compileCode('(ms)',		// 將 (ms) 編為內碼
+        current+','+
+        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+     ); return
+  }
+  var n=dStk.pop()			// 從 堆頂 取出 n
+  setTimeout(eval(
+     '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
+     iTib+')})'				// 設定 接續工作 源碼位址
+  ),n), waiting=1			// n 毫秒後 接續
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeExec '
+          +iTib+' after '+n+' ms')
+} end-code immediate</inp> <wrn>
+word defined at 0,14</wrn> <ok>ok</ok>
+<inp>// ////////////////////////////////////////////////////////////////////////</inp>  <ok>ok</ok>
+<inp>code (for) function(){</inp> <inp>
+  rStk.push(dStk.pop())
+} end-code</inp> <wrn>
+word defined at 0,15</wrn> <ok>ok</ok>
+<inp>code for function(){</inp> <inp>
+  compileCode('(for)'), dStk.push(compiledCode.length)
+} end-code compileOnly immediate</inp> <wrn>
+word defined at 0,16</wrn> <ok>ok</ok>
+<inp>code (next) function () {</inp> <inp>
+  if ( 0 &gt; (--rStk[rStk.length-1]) )
+     ip++, rStk.length--
+  else
+     ip=compiledCode[ip]
+} end-code compileOnly</inp> <wrn>
+word defined at 0,17</wrn> <ok>ok</ok>
+<inp>code next function () {</inp> <inp>
+  compileCode('(next)',dStk.pop())
+} end-code compileOnly immediate</inp> <wrn>
+word defined at 0,18</wrn> <ok>ok</ok>
+<inp>code r@ function () {</inp> <inp>
+  dStk.push(rStk[rStk.length-1])
+} end-code</inp> <wrn>
+word defined at 0,19</wrn> <ok>ok</ok>
+<inp>code doLit function(){// 定義 指令 doLit ( -- n ) 將 隨後內碼 n 放上堆疊</inp> <inp>
+  var n=compiledCode[ip++]	// 取 ip 所指 內碼 n
+  dStk.push(n)			// 將 n 放上堆疊
+} end-code compileOnly		// 使 doLit 在高階編譯狀態 才編碼</inp> <wrn>
+word defined at 0,20</wrn> <ok>ok</ok>
+<inp>code + function(){</inp> <inp>
+  var x=dStk.pop(); dStk[dStk.length-1]+=x
+} end-code</inp> <wrn>
+word defined at 0,21</wrn> <ok>ok</ok>
+<inp>code $" function(){// 定義 $"  取源碼字串直到 " (雙引號)</inp> <inp>
+  var s=nxtTkn('"')
+  if (compiling) compileCode('doLit',s)
+  else dStk.push(s)
+} end-code immediate</inp> <wrn>
+word defined at 0,22</wrn> <ok>ok</ok>
+<inp>code . function(){// 定義 . ( n -- ) 印出 堆頂 數字 或 字串</inp> <inp>
+  print(' '+dStk.pop())
+} end-code</inp> <wrn>
+word defined at 0,23</wrn> <ok>ok</ok>
+<inp>code (.) function(){// 定義 (.) 列印 隨後內碼</inp> <inp>
+  print(compiledCode[ip++])
+} end-code compileOnly</inp> <wrn>
+word defined at 0,24</wrn> <ok>ok</ok>
+<inp>code ." function(){// 定義 ." 列印源碼字串直到 " (雙引號)</inp> <inp>
+  var s=nxtTkn('"')
+  if (compiling)
+     compileCode('(.)',s)
+  else print(s)
+} end-code immediate</inp> <wrn>
+word defined at 0,25</wrn> <ok>ok</ok>
+<inp>code cr function(){// 定義 cr 印出 列尾</inp> <inp>
+  print('\n')
+} end-code</inp> <wrn>
+word defined at 0,26</wrn> <ok>ok</ok>
+<inp>// ////////////////////////////////////////////////////////////////////////</inp>  <ok>ok</ok>
+<inp>code debug function(){ //( &lt;指令名稱&gt; -- )// 追加 隨後指令名稱 到 待追蹤陣列</inp> <inp>
+  while(token=nxtTkn()){
+    if (z=fndWrd(token)){
+       debugged.push(z)
+       print('\nadd '+token+' to debugged')
+    } else
+       showErr('\n'+token+' undefined to debug')
+  }
+} end-code</inp> <wrn>
+word defined at 0,27</wrn> <ok>ok</ok>
+<inp>code unbug function(){//( &lt;指令名稱&gt; -- )	// 從 待追蹤陣列 刪除 隨後指令名稱</inp> <inp>
+  while(token=nxtTkn()){ var i
+    if (i=debugged.indexOf(token)) {
+       debugged=debugged.slice(0,i).concat(debugged.slice(i+1))
+       print('\nremove '+token+' from debugged')
+    } else
+       showErr('\n'+token+' not in debbuged')
+  }
+} end-code</inp> <wrn>
+word defined at 0,28</wrn> <ok>ok</ok>
+<inp>: task1 2 for 3000 ms $"  &lt;1" r@ + $" &gt;" + . next ."  &lt;1 done&gt;" ;</inp> <wrn>
+word defined at 0,29</wrn> <ok>ok</ok>
+<inp>: task2 1 for $"  &lt;2" r@ + $" &gt;" + . 4000 ms next ."  &lt;2 done&gt;" ;</inp> <wrn>
+word defined at 0,30</wrn> <ok>ok</ok>
+<inp>: taskA 7 for 1000 ms $"  &lt;A" r@ + $" &gt;" + . next ."  &lt;A done&gt;" ;</inp> <wrn>
+word defined at 0,31</wrn> <ok>ok</ok>
+<inp>: taskB 3 for $"  &lt;B" r@ + $" &gt;" + . 2000 ms next ."  &lt;B done&gt;" ;</inp> <wrn>
+word defined at 0,32</wrn> <ok>ok</ok>
+topic "multiTask1" of length 39
+eval Fri May 09 2014 12:17:18 GMT+0800 (台北標準時間)
+<inp>start task1 task2</inp>   &lt;21&gt;  &lt;12&gt;  &lt;20&gt;  &lt;11&gt; &lt;2 done&gt;  &lt;10&gt; &lt;1 done&gt;
+<inp></inp>  <ok>ok</ok>
+<inp>dbg start taskA taskB</inp> <wrn>
+009056 tracing 0,12 start  dStk: empty  rStk: empty</wrn>
+009065 set to resumeTask 0,31 taskA 41 after 10 ms
+009075 set to resumeTask 0,32 taskB 61 after 10 ms
+009088 resumeTask 0,31 taskA 41
+009094 set to resumeTask 0,31 taskA 48 after 1000 ms
+009099 resumeTask 0,32 taskB 61  &lt;B3&gt;
+009109 set to resumeTask 0,32 taskB 76 after 2000 ms
+010095 resumeTask 0,31 taskA 48  &lt;A7&gt;
+010104 set to resumeTask 0,31 taskA 48 after 1000 ms
+011106 resumeTask 0,31 taskA 48  &lt;A6&gt;
+011117 set to resumeTask 0,31 taskA 48 after 1000 ms
+011124 resumeTask 0,32 taskB 76  &lt;B2&gt;
+011136 set to resumeTask 0,32 taskB 76 after 2000 ms
+012118 resumeTask 0,31 taskA 48  &lt;A5&gt;
+012128 set to resumeTask 0,31 taskA 48 after 1000 ms
+013129 resumeTask 0,31 taskA 48  &lt;A4&gt;
+013140 set to resumeTask 0,31 taskA 48 after 1000 ms
+013148 resumeTask 0,32 taskB 76  &lt;B1&gt;
+013159 set to resumeTask 0,32 taskB 76 after 2000 ms
+014140 resumeTask 0,31 taskA 48  &lt;A3&gt;
+014149 set to resumeTask 0,31 taskA 48 after 1000 ms
+015150 resumeTask 0,31 taskA 48  &lt;A2&gt;
+015159 set to resumeTask 0,31 taskA 48 after 1000 ms
+015167 resumeTask 0,32 taskB 76  &lt;B0&gt;
+015180 set to resumeTask 0,32 taskB 76 after 2000 ms
+016159 resumeTask 0,31 taskA 48  &lt;A1&gt;
+016169 set to resumeTask 0,31 taskA 48 after 1000 ms
+017169 resumeTask 0,31 taskA 48  &lt;A0&gt; &lt;A done&gt;
+017183 resumeTask 0,31 taskA done
+017191 resumeTask 0,32 taskB 76 &lt;B done&gt;
+017204 resumeTask 0,32 taskB done
+<inp></inp>  <ok>ok</ok></pre>
+</body></html>
