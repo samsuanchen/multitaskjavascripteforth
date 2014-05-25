@@ -1,0 +1,149 @@
+code immediate function(){// 定義 指令 immediate		( -- )
+  lstWrd.immediate=1			// 使 最後定義的指令 在高階編譯狀態 能執行
+} end-code
+code compileOnly function(){// 定義 指令 compileOnly	( -- )
+  lstWrd.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
+} end-code
+code // function(){ var n,t// 定義 指令 // (雙斜線) 忽略源碼字串到 列尾
+  iTib += (n= (t=tib.substr(iTib)).indexOf('\n') )>=0 ? n : t.length
+} end-code immediate			// 使 雙斜線 指令 在高階編譯狀態 能執行
+// ////////////////////////////////////////////////////////////////////////
+code : function(){// 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
+  src		= ''			// 高階指令 源碼
+  hSrc		= iTib-2		// 高階指令 源碼字串起點
+  hName		= nxtTkn()		// 高階指令 名稱
+  hXt		= compiledCode.length 	// 高階指令 編碼起點
+  compiling	= 1			// 高階指令 編譯狀態 進入
+} end-code
+code ret function(){// 定義 指令 ret ( -- ) 結束被呼叫的 高階指令
+  ip=rStk.pop()				// 從 return stack 取出 ip
+} end-code compileOnly			// 使 ret 在高階編譯狀態 才編碼
+code ; function () {			// 定義 指令 ; ( -- ) 結束 高階指令的定義
+  compileCode("ret")			// 編譯 ret 為 高階指令 內碼
+  compiling=0				// 高階指令 編譯狀態 結束
+  var src=tib.substring(hSrc,iTib)	// 源碼字串
+  newWrd(hName,hXt,src)			// 以 名稱 內碼起點 原碼字串 定義 高階指令
+} end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行
+// ////////////////////////////////////////////////////////////////////////
+code directOut function(){
+  directOut.checked=true
+} end-code
+code bufferOut function(){
+  directOut.checked=false
+} end-code
+code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的 工作
+  directOut.checked=true
+  while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
+    var w=zWrd(z) 			// 取得指令資訊 w
+    if (w.src) { 			// 若是 高階指令
+       setTimeout(eval(
+	  '(function(){resumeTask('+	// 以 resumeTask 為 起動涵式
+	  JSON.stringify({
+	     rStk:[ip],dStk:[],z:z,ip:w.xt// 設定 起動工作 所需資訊
+	  })+')})'
+       ),10), waiting=1			// 10 毫秒後起動
+       if (tracing)			// 若要顯示 追蹤檢視資訊
+          print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
+             +z+' '+w.name+' '+w.xt+' after 10 ms')
+    } else
+       abort(z+' '+w.name+' not high level to start')
+  }
+} end-code 
+code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)
+  var n=dStk.pop()			// 從 堆頂 取出 n
+  var z=compiledCode[ip++]		// 從 隨後內碼 取 指定位址
+  setTimeout(eval(
+     '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
+     JSON.stringify({
+        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+     })+')})'
+  ),n), waiting=1			// n 毫秒後起動
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
+          +z+' '+zWrd(z).name+' '+ip+' after '+n+' ms')
+} end-code compileOnly
+code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
+  if (compiling) {			// 若是 編議狀態
+     compileCode('(ms)',		// 將 (ms) 編為內碼
+        current+','+
+        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+     ); return
+  }
+  var n=dStk.pop()			// 從 堆頂 取出 n
+  setTimeout(eval(
+     '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
+     iTib+')})'				// 設定 接續工作 源碼位址
+  ),n), waiting=1			// n 毫秒後 接續
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeExec '
+          +iTib+' after '+n+' ms')
+} end-code immediate
+// ////////////////////////////////////////////////////////////////////////
+code (for) function(){
+  rStk.push(dStk.pop())
+} end-code
+code for function(){
+  compileCode('(for)'), dStk.push(compiledCode.length)
+} end-code compileOnly immediate
+code (next) function () {
+  if ( 0 > (--rStk[rStk.length-1]) )
+     ip++, rStk.length--
+  else
+     ip=compiledCode[ip]
+} end-code compileOnly
+code next function () {
+  compileCode('(next)',dStk.pop())
+} end-code compileOnly immediate
+code r@ function () {
+  dStk.push(rStk[rStk.length-1])
+} end-code
+code doLit function(){// 定義 指令 doLit ( -- n ) 將 隨後內碼 n 放上堆疊
+  var n=compiledCode[ip++]	// 取 ip 所指 內碼 n
+  dStk.push(n)			// 將 n 放上堆疊
+} end-code compileOnly		// 使 doLit 在高階編譯狀態 才編碼
+code + function(){
+  var x=dStk.pop(); dStk[dStk.length-1]+=x
+} end-code
+code $" function(){// 定義 $"  取源碼字串直到 " (雙引號)
+  var s=nxtTkn('"')
+  if (compiling) compileCode('doLit',s)
+  else dStk.push(s)
+} end-code immediate
+code . function(){// 定義 . ( n -- ) 印出 堆頂 數字 或 字串
+  print(' '+dStk.pop())
+} end-code
+code (.) function(){// 定義 (.) 列印 隨後內碼
+  print(compiledCode[ip++])
+} end-code compileOnly
+code ." function(){// 定義 ." 列印源碼字串直到 " (雙引號)
+  var s=nxtTkn('"')
+  if (compiling)
+     compileCode('(.)',s)
+  else print(s)
+} end-code immediate
+code cr function(){// 定義 cr 印出 列尾
+  print('\n')
+} end-code
+// ////////////////////////////////////////////////////////////////////////
+code debug function(){ //( <指令名稱> -- )// 追加 隨後指令名稱 到 待追蹤陣列
+  while(token=nxtTkn()){
+    if (z=fndWrd(token)){
+       debugged.push(z)
+       print('\nadd '+token+' to debugged')
+    } else
+       showErr('\n'+token+' undefined to debug')
+  }
+} end-code
+code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨後指令名稱
+  while(token=nxtTkn()){ var i
+    if (i=debugged.indexOf(token)) {
+       debugged=debugged.slice(0,i).concat(debugged.slice(i+1))
+       print('\nremove '+token+' from debugged')
+    } else
+       showErr('\n'+token+' not in debbuged')
+  }
+} end-code
+: task1 2 for 3000 ms $"  <1" r@ + $" >" + . next ."  <1 done>" ;
+: task2 1 for $"  <2" r@ + $" >" + . 4000 ms next ."  <2 done>" ;
+: taskA 7 for 1000 ms $"  <A" r@ + $" >" + . next ."  <A done>" ;
+: taskB 3 for $"  <B" r@ + $" >" + . 2000 ms next ."  <B done>" ;

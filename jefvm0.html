@@ -1,0 +1,54 @@
+<html><head>
+	<title>jeForthVM demo 0</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link type="text/css" rel="stylesheet" href="jefvm0.css">
+	<script src='./jeForthVM.js'></script>
+	<script>
+		'uses strict'
+		if (typeof require=='undefined')
+			var VM=new jeForthVM()
+		else {
+			var Z=require('./jeForthVM.js')
+			var VM=new Z.jeForthVM()
+		}
+		var type=function(x){
+			x=x.toString()
+			output.innerHTML+=x
+			output.scrollTop=output.scrollHeight		//    scroll output
+			x=x.split(/\r?\n/).forEach(function(L){
+				if(L)
+					console.log(L)
+			})
+		}
+		VM.type=type
+		VM.tagging=1
+		var init=function(){
+			VM.exec(code.value)
+			VM.exec(test.value)
+		}
+		var changeTagging=function(){
+			VM.tagging=chkTag.checked
+		}
+	</script>
+</head><body onload='init()'>
+	<button onclick="VM.exec(code.value)">eval</button>		<!-- btnEvalCode -->
+	source codes<br>										<!-- sourceCodes -->
+	<textarea id='code'>
+code . function(){	//++ jeforth_word . ( n -- )
+  type(' '+dStk.pop())	// pop n from stack and type n
+} end-code
+code + function(){	//++ jeforth_word + ( a b -- a+b )
+  var b=dStk.pop()
+  dStk[dStk.length-1]+=b// pop b on stack add to top of stack
+} end-code
+	</textarea><br>
+	<button onclick="VM.exec(test.value)">eval</button>		<!-- btnEvalTest  -->
+	test commands											<!-- testCommands -->
+	<textarea id='test'>
+1 . 2 3 + .
+	</textarea>
+	output result
+	<input	id="directOut" type="checkbox">directOut
+	<input	id="chkTag"    type="checkbox" checked onclick='changeTagging()'>tagging
+	<pre id='output'></pre>									<!-- outputResult showing "1 5 ok" -->
+</body></html>

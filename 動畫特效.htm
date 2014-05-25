@@ -17,8 +17,15 @@
 		#bottomBox			  { background-color: #EEE; position: relative; top: 0px;
 								width: 100%; height: 200px; z-index: 0; margin: 0 auto; }
 		#cmdBtn				  { width:9%; }
-		#command			  { width:90%; }
-		#output				  { height:60px; }
+		#command			  { width:99%; }
+		#output				  { height:60px;
+								width: 99%; 
+								overflow: auto;
+								overflow-y: auto;
+								overflow-x: none;
+								margin-top: 0; 
+								margin-bottom: 0;
+								text-align: left; }
 		.x					  { background-color: #EE8 }
 	</style>
 	<script src="./動畫特效_files/jquery-1.7.2.min.js"	></script>
@@ -26,7 +33,7 @@
 	<script src="./動畫特效_files/alice.min.js"			></script>
 	<script src="./動畫特效_files/builder.js"			></script>
 	<script src="./動畫特效_files/actions.js"			></script>
-	<script src="./multiTaskJavascriptEforth.js"		></script>
+	<script src="./jeForthVM.js"		></script>
     </head><body>
 		<a  href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0CCkQFjAA&url=http%3A%2F%2Fwww.dickbaldwin.com%2Ftocalice.htm&ei=KZpXU7r8OsTlkgXoiYGACg&usg=AFQjCNFAWPxLTNYAIW8cLK7zEWJijVgW2w&sig2=Fvr1obX0oObKQBXM8HzkLw">Alice Programming Tutorial, by Richard G Baldwin</a>
     	<table width="100%"><tr>
@@ -56,48 +63,12 @@
         <input type="button" id="cmdBtn" class="button" value="執行" onclick="exeCmd()">
         <input id="directOut" type="checkbox">directOut
         <textarea id="preload" hidden>
-code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨後指令名稱
-  while(token=nxtTkn()){ var i
-    if (i=debugged.indexOf(token)) {
-       debugged=debugged.slice(0,i).concat(debugged.slice(i+1))
-       print('\nremove '+token+' from debugged')
-    } else
-       showErr('\n'+token+' not in debbuged')
-  }
-} end-code
-code debug function(){ //( <指令名稱> -- )// 追加 隨後指令名稱 到 待追蹤陣列
-  while(token=nxtTkn()){
-    if (z=fndWrd(token)){
-       debugged.push(z)
-       print('\nadd '+token+' to debugged')
-    } else
-       showErr('\n'+token+' undefined to debug')
-  }
-} end-code
 code immediate function(){// 定義 指令 immediate		( -- )
   lstWrd.immediate=1			// 使 最後定義的指令 在高階編譯狀態 能執行
-} end-code
-code compileOnly function(){// 定義 指令 compileOnly	( -- )
-  lstWrd.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
 } end-code
 code // function(){ var n,t// 定義 指令 // (雙斜線) 忽略源碼字串到 列尾
   iTib += (n= (t=tib.substr(iTib)).indexOf('\n') )>=0 ? n : t.length
 } end-code immediate			// 使 雙斜線 指令 在高階編譯狀態 能執行
-// debug 向左滾動
-        </textarea>
-        <textarea id="command">1,2,3 向右滑入 3000 ms 1,2,3 向左滑入 3000 ms 向右滾動 2 向左滾動 3 向下滑入 3000 ms 3 向上滑入 2 向右滾動 向左滾動
-code ignoreOut function(){
-  this.oldType=this.type, this.type=false
-} end-code ignoreOut
-code resumeOut function(){
-  this.type=this.oldType
-} end-code
-code trace function(){
-  tracing=true
-} end-code
-code untrace function(){
-  tracing=false
-} end-code
 // ////////////////////////////////////////////////////////////////////////
 code : function(){// 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
   src		= ''			// 高階指令 源碼
@@ -105,6 +76,9 @@ code : function(){// 定義 指令 : ( <指令名稱> -- ) 開始 高階指令�
   hName		= nxtTkn()		// 高階指令 名稱
   hXt		= compiledCode.length 	// 高階指令 編碼起點
   compiling	= 1			// 高階指令 編譯狀態 進入
+} end-code
+code compileOnly function(){// 定義 指令 compileOnly	( -- )
+  lstWrd.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
 } end-code
 code ret function(){// 定義 指令 ret ( -- ) 結束被呼叫的 高階指令
   ip=rStk.pop()				// 從 return stack 取出 ip
@@ -123,8 +97,10 @@ code bufferOut function(){
   directOut.checked=false
 } end-code
 code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的 工作
-  if(directOut) directOut.checked=true
+  time0=new Date()
+  directOut.checked=true
   while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
+    tsks.push(z)
     var w=zWrd(z) 			// 取得指令資訊 w
     if (w.src) { 			// 若是 高階指令
        setTimeout(eval(
@@ -139,9 +115,8 @@ code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的
     } else
        abort(z+' '+w.name+' not high level to start')
   }
-} end-code 
-code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)
-  var n=dStk.pop()			// 從 堆頂 取出 n
+} end-code
+code function ms(n){
   var z=compiledCode[ip++]		// 從 隨後內碼 取 指定位址
   setTimeout(eval(
      '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
@@ -152,6 +127,41 @@ code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所
   if (tracing)				// 若要顯示 追蹤檢視資訊
      print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
           +z+' '+zWrd(z).name+' '+ip+' after '+n+' ms')
+} end-code
+code function resumeAt(t){
+  n = t-(new Date()-time0)
+  var z=compiledCode[ip++]		// 從 隨後內碼 取 指定位址
+  setTimeout(eval(
+     '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
+     JSON.stringify({
+        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+     })+')})'
+  ),n), waiting=1			// n 毫秒後起動
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
+          +z+' '+zWrd(z).name+' '+ip+' at '+t+' ms')
+} end-code
+code (resumeAt) function(){ //( t -- )
+  VM.resumeAt( dStk.pop() )
+} end-code compileOnly
+code resumeAt function(){ //( t -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
+  if (compiling) {			// 若是 編議狀態
+     compileCode('(resumeAt)',		// 將 (ms) 編為內碼
+        current+','+
+        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+     ); return
+  }
+  var n=dStk.pop()-( new Date()-time0 )	// 從 堆頂 取出 t 計算 n
+  setTimeout(eval(
+     '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
+     iTib+')})'				// 設定 接續工作 源碼位址
+  ),n), waiting=1			// n 毫秒後 接續
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeExec '
+          +iTib+' after '+n+' ms')
+} end-code immediate
+code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)
+  VM.ms( dStk.pop() )
 } end-code compileOnly
 code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
   if (compiling) {			// 若是 編議狀態
@@ -195,6 +205,12 @@ code doLit function(){// 定義 指令 doLit ( -- n ) 將 隨後內碼 n 放上�
 code + function(){
   var x=dStk.pop(); dStk[dStk.length-1]+=x
 } end-code
+code - function(){
+  var x=dStk.pop(); dStk[dStk.length-1]-=x
+} end-code
+code * function(){
+  var x=dStk.pop(); dStk[dStk.length-1]*=x
+} end-code
 code $" function(){// 定義 $"  取源碼字串直到 " (雙引號)
   var s=nxtTkn('"')
   if (compiling) compileCode('doLit',s)
@@ -216,12 +232,36 @@ code cr function(){// 定義 cr 印出 列尾
   print('\n')
 } end-code
 // ////////////////////////////////////////////////////////////////////////
-// debug 向下滾動 向右滾動 向上滾動 向左滾動 向上旋轉 翻轉飛出 向上旋轉 翻轉飛入
-dbg : a1  3 for 1 向右滑入 3000 ms 1 向下滑入 3000 ms 1 向左滑入 3000 ms 1 向上滑入 3000 ms next ;
+code debug function(){ //( <指令名稱> -- )// 追加 隨後指令名稱 到 待追蹤陣列
+  while(token=nxtTkn()){
+    if (z=fndWrd(token)){
+       debugged.push(z)
+       print('\nadd '+token+' to debugged')
+    } else
+       showErr('\n'+token+' undefined to debug')
+  }
+} end-code
+code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨後指令名稱
+  while(token=nxtTkn()){ var i
+    if (i=debugged.indexOf(token)) {
+       debugged=debugged.slice(0,i).concat(debugged.slice(i+1))
+       print('\nremove '+token+' from debugged')
+    } else
+       showErr('\n'+token+' not in debbuged')
+  }
+} end-code
+  directOut
+: task1 2 for 3000 ms $" <1_" r@ + $" >" + . next ."  <1_done>" ;
+: task2 1 for $" <2_" r@ + $" >" + . 4000 ms next ."  <2_done>" ;
+: taskA 7 for 8 r@ - 1000 * resumeAt $" <A_" r@ + $" >" + . next ."  <A_done>" ;
+: taskB 3 for $" <B_" r@ + $" >" + . 4 r@ - 2000 * resumeAt next ."  <B_done>" ;
+        </textarea>
+        <textarea id="command">1,2,3 向右滑入 3000 ms 1,2,3 向左滑入 3000 ms 向右滾動 2 向左滾動 3 向下滑入 3000 ms 3 向上滑入 2 向右滾動 向左滾動
+: a1  3 for 1 向右滑入 3000 ms 1 向下滑入 3000 ms 1 向左滑入 3000 ms 1 向上滑入 3000 ms next ;
 : a2  4 for 2500 ms 2 向下滾動 2500 ms 2 向右滾動 2500 ms 2 向上滾動 2500 ms 2 向左滾動 next ;
 : a3  5 for 2000 ms 3 向上旋轉 2000 ms 3 翻轉飛出 2000 ms 3 向下旋轉 2000 ms 3 翻轉飛入 next ;
-dbg start a1 a2 a3</textarea>
-		<div id="output">右下 參數修訂 後 點左下 特效按鈕 對應 中文指令 將自動更新特效 </div>
+start a1 a2 a3</textarea>
+		<pre id="output">右下 參數修訂 後 點左下 特效按鈕 對應 中文指令 自動更新特效 </pre>
         <!-- Settings -->
         <div id="settingsDiv" style="height: 653px;">
             <table border="0" cellpadding="5" cellspacing="0"><tbody><tr>
@@ -557,7 +597,7 @@ dbg start a1 a2 a3</textarea>
         }, false)
 		app.run=function(src){ return eval(src) }
 	//////////////////////////////////////////////////////////////////////////////////////////////////////																								//
-		var VM = new eForthVM1(), buf=''			// get VM												//
+		var VM = new jeForthVM(), buf=''			// get VM												//
         function type(msg){ 
         	buf+=msg 		// give VM an output function
         	if (directOut.checked)
@@ -654,11 +694,11 @@ dbg start a1 a2 a3</textarea>
 		"} end-code																	  	  ")//
 		VM.exec(preload.value)
 		buf=''
-		var i=0, v=VM.getVocs()																//
+		var i=0, v=JSON.parse(VM.getVocs())																//
 		var w=v[0].wrds.map(function(w){													//
 			return w?((++i)+'.'+w.name):''													//
 		})																					//
-		output.innerHTML+='(下列指令 可用於 執行)<br>'+w.join(' ')+'<br>'					//
+		output.innerHTML+='(下列 '+(w.length-1)+' 指令 可用於 執行)<br>'+w.join(' ')+'<br>'					//
 		var exeCmd=function () {															//
 			VM.exec(command.value)															//
 		//	if (buf) dumpBuf()																//

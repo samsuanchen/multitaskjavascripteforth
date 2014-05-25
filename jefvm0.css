@@ -1,0 +1,15 @@
+all				{font-family	: "²Ó©úÅé"			;}
+pre, textarea	{border			: 1px solid fuchsia	;
+				 width			:  100%				;
+				 overflow  		:  auto				;
+				 overflow-y		:  auto				;
+				 overflow-x		:  none				;
+				 margin-top		:     0				; 
+				 margin-bottom	:     0				;}
+#code			{height			:   30%				;}
+#test			{height			:   10%				;}
+pre				{height			:   50%				;}
+inp				{color			:  blue 			;}
+wrn				{color			: brown				;}
+err				{color			:   red  			;}
+ok				{color			: green				;}

@@ -1,0 +1,7 @@
+{ "main": "../jefvm2.html",
+  "name": "Multi Task Javascript eForth",
+  "description": "nw js working",
+  "version": "0.0.1",
+  "single-instance":false,
+  "window": {"height": 800}
+}

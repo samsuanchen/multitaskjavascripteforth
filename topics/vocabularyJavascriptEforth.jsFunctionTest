@@ -1,7 +1,0 @@
-code function xxx(msg) {
-  print(msg)
-} end-code
-code xxx function() {
-  xxx('hello')
-} end-code
-xxx
