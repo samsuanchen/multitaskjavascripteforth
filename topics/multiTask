@@ -31,9 +31,9 @@ code directOut function(){
 code bufferOut function(){
   directOut.checked=false
 } end-code
-code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的 工作
+code start function(){//( <指令> -- )// 隨後 高階指令 設為要同時起動的 工作
   directOut.checked=true
-  while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
+  while(z=fndWrd( nxtTkn() )) { 	// 搜尋 要起動的 指令位址 z
     var w=zWrd(z) 			// 取得指令資訊 w
     if (w.src) { 			// 若是 高階指令
        setTimeout(eval(
