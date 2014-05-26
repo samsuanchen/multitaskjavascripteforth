@@ -1,2 +1,4 @@
+task1 task2
+taskA taskB
 start task1 task2
 dbg start taskA taskB

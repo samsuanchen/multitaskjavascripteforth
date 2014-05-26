@@ -294,7 +294,6 @@
 			print('\n'+digits(new Date()-time0,6)+' resumeExec at '+it)
 		waiting = 0
 		do {
-			shwNextInpLine()
 			while(tkn = nxtTkn()){					// get tkn
 				if (!tkn)							// end of line or end of tib
 					break
@@ -325,6 +324,8 @@
 			cr()
 			if (tib.substr(iTib))
 				iTib++
+			if (tib.substr(iTib))
+				shwNextInpLine()
 		} while (tib.substr(iTib))					// error, or waiting
 	}
 	var exec =function (cmds) {	// outer source code interpreter
@@ -334,7 +335,8 @@
 		}
 		tagging=this.tagging
 		tib=tsk0.tib=cmds.replace(/\s+$/,''), iTib=tsk0.iTib=0
-		dStk=tsk0.dStk=[], rStk=tsk0.rStk=[] 
+		dStk=tsk0.dStk=[], rStk=tsk0.rStk=[]
+		shwNextInpLine()
 		resumeExec()
 	}
 	var dbg =function (z) {	// this word dbg is just for debugging
@@ -352,7 +354,8 @@
 				+ ( (i=t.indexOf('\n'))<0?t:t.substr(0,i) )
 				+ '\ndStk '	   + (dStk.length ? dStk.join(' ') : 'empty')
 			shwWrn(msg)
-			console.log(msg)	// set break point here VM will pause if word dbg is executed
+			//*** set break point BP0 here ***//
+			console.log(msg)	// VM will pause if dbg alone is executed
 			return
 		}
 		// z in debugged
@@ -366,7 +369,8 @@
 				+ '  dStk: '	    + (dStk.length ? dStk.join(' ') : 'empty')
 				+ '  rStk: '	    + (rStk.length ? rStk.join(' ') : 'empty')
 			shwWrn(msg)
-			console.log(msg)	// set break point here VM will pause if id is in list debugged
+			//*** break point BP1 ***//
+			console.log(msg)	// VM will pause if any words in debugged list is executed
 	}
 	var execute=function (xt) {
 		if (xt%1===0)	// if xt is integer

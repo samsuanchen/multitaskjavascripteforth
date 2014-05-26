@@ -80,7 +80,7 @@ code previous function () {
 vocabulary voc1 // 定義 詞彙 voc1
 vocabulary voc2 // 定義 詞彙 voc2
 vocabulary voc3 // 定義 詞彙 voc3
-dbg voc1 definitions
+voc1 definitions
 code a1 function () {
   print(' a1 in voc1')
 } end-code
