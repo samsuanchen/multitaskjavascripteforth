@@ -32,11 +32,11 @@ starting a node-webkit local host html page with local storage used as demo 1 to
 
 jefvm2run.bat
 =============
-running node-dev jefvm2.js as a simple demo to run this VM.
+running node-dev jefvm2.js (with file system) as a simple demo to run this VM.
 
 jefvm2debug.bat
 ===============
-running node-webkit jefvm2.html as a simple demo to test and debug this VM.
+running node-webkit jefvm2.html (with file system) as a simple demo to test and debug this VM.
 
 1. topics
 =========

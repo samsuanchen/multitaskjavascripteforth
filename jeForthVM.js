@@ -281,9 +281,9 @@
 	}
 	var shwNextInpLine=function() { var t
 		t=tib.substr(iTib)
-		if(VM.output && !(VM.output.innerHTML+VM.out).match(/\n$/))print('\n')
-		shwInp(t.substr(0,eol=at(t,'\n')))
-		eol=t.substr(eol)
+		if (!t) return
+		t=t.substr(0,eol=at(t,'\n'))
+		shwInp(t)
 	}
 	var resumeExec=function (it) { var t, z, v, i, w
 		if (it)
