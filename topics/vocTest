@@ -29,7 +29,7 @@ code alias function () { // 定義 指令 alias ( 指令位址 <指令別名> --
   if (w.compileOnly) lstWrd.compileOnly	=w.compileOnly	// 在高階編譯狀態 才執行
   if (w.immediate)   lstWrd.immediate	=w.immediate	// 在高階編譯狀態 能執行
   if (w.wrds)       lstWrd.wrds	=w.wrds	// 詞彙指令陣列
-  if (w.dictionary)  lstWrd.dictionary	=w.dictionary	// 詞彙指令索引
+  if (w.index)  lstWrd.index	=w.index	// 詞彙指令索引
 } end-code
 ' // alias \
 code words function(){ // 定義 指令 wrds ( -- ) 列印 當前詞彙 所有 指令名稱
@@ -65,7 +65,7 @@ code ; function () { // 定義 指令 ; ( -- ) 結束 高階指令的定義
 code vocabulary function(){ var v, i, vid, w
   v=vocs[current], i=v.wrds.length, vid=vocs.length
   newWrd(nxtTkn(),eval('(function(){context[0]='+vid+'})')) // add new word
-  w=v.wrds[i], w.vid=vid, w.wrds=[0], w.dictionary={}
+  w=v.wrds[i], w.vid=vid, w.wrds=[0], w.index={}
   vocs.push(w) // add new vocabulary
 } end-code immediate
 code definitions function(){
@@ -80,7 +80,7 @@ code previous function () {
 vocabulary voc1 // 定義 詞彙 voc1
 vocabulary voc2 // 定義 詞彙 voc2
 vocabulary voc3 // 定義 詞彙 voc3
-voc1 definitions
+dbg voc1 definitions
 code a1 function () {
   print(' a1 in voc1')
 } end-code

@@ -76,7 +76,7 @@ code alias function () { // 定義 指令 alias ( 指令位址 <指令別名> --
   if (w.compileOnly) lstWrd.compileOnly	=w.compileOnly	// 在高階編譯狀態 才執行
   if (w.immediate)   lstWrd.immediate	=w.immediate	// 在高階編譯狀態 能執行
   if (w.wrds)        lstWrd.wrds	=w.wrds	// 詞彙指令陣列
-  if (w.dictionary)  lstWrd.dictionary	=w.dictionary	// 詞彙指令索引
+  if (w.index)  lstWrd.index	=w.index	// 詞彙指令索引
 } end-code
 code : function () { // 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
   src		= ''			// 高階指令 源碼
@@ -134,7 +134,7 @@ code wrds function () { // 定義 wrds 檢視 所有 指令名稱 (可能重複)
 wrds // 檢視 所有 指令名稱
 code uniquewrds function () { // 定義 uniquewrds 檢視 所有 指令名稱 (不重複)
   var v=vocs[context[0]], t='\n ', w
-  for(w in v.dictionary)	// 從 dictionary 物件 針對每個指令 w
+  for(w in v.index)	// 從 index 物件 針對每個指令 w
     t+=' '+w			// 採用	空格 區隔
   print(t)			// 列印
 } end-code

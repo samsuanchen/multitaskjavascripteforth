@@ -116,7 +116,11 @@
 	}
 	var reset	=function (   ) { error = 1, dStk = [], rStk = [] }
 	var type	=function (msg) { if (VM.type && msg) VM.type(msg) }
-	var txtCnv	=function (txt) { return txt.toString().replace(/</g,'&lt;'	) }
+	var txtCnv	=function (txt) {
+		if (VM.output)
+			txt=txt.toString().replace(/</g,'&lt;')
+		return txt 
+	}
 	var cr		=function (   ) { type("\n"					) }
 	var print	=function (txt) { type(			txtCnv(txt)	) }
 	var shwOk	=function (txt) { type(tagging?
