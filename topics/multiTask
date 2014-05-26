@@ -26,14 +26,14 @@ code ; function () {			// 定義 指令 ; ( -- ) 結束 高階指令的定義
 } end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行
 // ////////////////////////////////////////////////////////////////////////
 code directOut function(){
-  directOut.checked=true
+  VM.directOut.checked=true
 } end-code
 code bufferOut function(){
-  directOut.checked=false
+  VM.directOut.checked=false
 } end-code
 code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的 工作
   time0=new Date()
-  directOut.checked=true
+  VM.directOut.checked=true
   while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
     tsks.push(z)
     var w=zWrd(z) 			// 取得指令資訊 w
