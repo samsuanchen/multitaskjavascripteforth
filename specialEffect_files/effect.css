@@ -1,0 +1,16 @@
+body, select		  		{ font: 8pt Arial, sans-serif; }
+legend, label, .label 		{ font-weight: bold; }
+#json				  		{ width: 99%; height: 200px; }
+#btnCmd				  		{ width: 80; }
+#elem1, #elem2, #elem3		{ border: 1px dashed #000; border-radius: 30px;
+							  padding: 5px; text-align: center; width: 200px; }
+#testDiv			  		{ position: absolute; top: 50px; left: 0; width: 100%;
+							  height: 61px; z-index: 1; }
+#settingsDiv		  		{ position: relative; top: 20px; width: 650px; height: 780px;
+							  z-index: 0; margin: 0 auto; }
+#bottomBox			  		{ background-color: #EEE; position: relative; top: 0px;
+							  width: 100%; height: 200px; z-index: 0; margin: 0 auto; }
+#cmdBtn				  		{ width:9%; }
+#command			  		{ width:90%; }
+#output				  		{ height:60px; }
+.x					  		{ background-color: #EE8 }

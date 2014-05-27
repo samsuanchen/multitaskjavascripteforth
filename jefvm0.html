@@ -1,19 +1,24 @@
-<html><head><title>jefvm0</title>
+<html><head>
+	<title>00 jefvm demo</title>
 	<link type="text/css" rel="stylesheet" href="jefvm0.css">
 	<script src='./jeForthVM.js'></script>
 	<script>'uses strict'
-		if (typeof require==='undefined') var VM=new   jeForthVM()
-		else var Z=require('./jeForthVM.js'), VM=new Z.jeForthVM()
+		if (typeof jeForthVM==='undefined')
+			var Z=require('./jeForthVM.js'),jeForthVM=Z.jeForthVM
+		var VM=new jeForthVM()
 		var type=function(x){
-			x=x.toString(), output.innerHTML+=x
-			output.scrollTop=output.scrollHeight		//    scroll output
+			x=x.toString()
+			output.innerHTML+=x
+			output.scrollTop=output.scrollHeight		// scroll down
 		}
 		VM.type=type
-		var toggleTagging=function(){ VM.tagging=chkTag.checked }
+		var toggleTagging=function(){
+			VM.tagging=chkTag.checked
+		}
 	</script>
 </head><body>
-	<button onclick="VM.exec(code.value)">eval</button>		<!-- btnEvalCode -->
-	source codes<br>										<!-- sourceCodes -->
+	<button onclick="VM.exec(code.value)">eval</button>	<!-- btnEvalCode -->
+	jeforth source codes<br>							<!-- sourceCodes -->
 	<textarea id='code'>
 code . function(){	//++ jeforth_word . ( n -- )
   type(' '+dStk.pop())	// pop n from stack and type it
@@ -21,13 +26,13 @@ code . function(){	//++ jeforth_word . ( n -- )
 code + function(){	//++ jeforth_word + ( a b -- a+b )
   var b=dStk.pop()		// pop b from stack
   dStk[dStk.length-1]+=b// add it to top of stack
-} end-code
-	</textarea><br>
-	<button onclick="VM.exec(test.value)">eval</button>		<!-- btnEvalTest  -->
-	test commands											<!-- testCommands -->
-	<textarea id='test'>1 . 2 3 + .</textarea>
+} end-code</textarea><br>
+	<button onclick="VM.exec(test.value)">eval</button>	<!-- btnEvalTest  -->
+	jeforth test commands								<!-- testCommands -->
+	<textarea id='test'>
+1 . 2 3 + .</textarea>
 	output result
 	<input	id="directOut" type="checkbox">directOut
 	<input	id="chkTag"    type="checkbox" onclick='toggleTagging()'>tagging
-	<pre id='output'></pre>									<!-- outputResult showing "1 5 ok" -->
+	<pre id='output'></pre>								<!-- outputResult showing "1 5 ok" -->
 </body></html>
