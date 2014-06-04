@@ -1,80 +1,76 @@
-#javascript eforth VM
+#jeforthVM -- the javascript eforth VM
 
-**jeForthVM.js** is a javascript source code running as a **multi task jeforth VM** with initially three jeforth words **'root'**, **'code'**, and **'dbg'**. On web client html page. This VM could be included by &lt;script src= **"./jeForthVM.js"**> &lt;/script>. Please check **jefvm0.html**, **jefvm1.htm1**, **movingEffect.htm**, or related tutorials. A node.js webkit server program could use this VM as well, via require( **"./jeForthVM.js"**). Please check **jefvm0.bat** or **jefvm1.bat**.
+**jeForthVM.js** is a javascript source code running as a **multi task jeforth VM** with initially three jeforth words **'root'**, **'code'**, and **'dbg'** on web client or server html pages. This VM could be involved by &lt;script src= **"./jeForthVM.js"**> &lt;/script>. Please check demos: **jefvm0.html**, **jefvm1.htm1**, or **movingEffect.htm**. A node.js (or node-webkit) server program could involve this VM, via require( **"./jeForthVM.js"**). Please check demos: **jefvm0.bat**, **jefvm1.bat**, or **jefvm2run.bat**.
 
 >##The word 'root'
 
-This is a **root vocabulary** having three jeforth word words **'root'**, **'code'**, and **'dbg'** initially.
-Please check the topic **vocTest** to see how to add vocabulary/word and to use vocabulary/word among all vocabularies.
+>This is a primitive root **vocabulary** having three jeforth word words **'root'**, **'code'**, and **'dbg'** initially.
+Please check topic 06 **vocTest** (using UP/DOWN key to select topic) in jefvm1.htm1 to see how a **new vocabulary/word** could be defined, and how an **appropriate vocabulary/word** among vocabularies could be selected and be used properly.
 
 >##The word 'code'
 
-This jeforth word is used to define **new jeforth words** running thier corresponding **java script anonymous functions** or to define **new js functions called by jeforth words**. Lots new jeforth word definitions could be seen in topics **default**, **basic01**, **jsFunctionTest**, **vocTest**, and **multiTask**.
+>This jeforth word could be used to define a **new jeforth words** by assigning a java script anonymous function to the new word. In jefvm1.htm1, a lot of new jeforth words defined as demos in topics **default**, **basic01**, **vocTest**, and **multiTask**. Also, this jeforth word could be used to define **new js functions** in order to be called by jeforth words. Please check topic 05 **jsFunctionTest** in jefvm1.html.
 
 >##The word 'dbg'
 
-This jeforth word is used to trace or debug all the jeforth words defined. Setting **breakpoint BP0** in the source code of dbg could halt the processing if **dbg** alone is being executed (having no any following word). Otherwise, for example, **dbg xyz**, the following word xyz will be put into debugged list. Setting **breakpoint BP1** in the source code of dbg could halt the processing if any of the words in the list is being executed.
+>This jeforth word is used to easy trace or debug a defined jeforth word. Setting breakpoint in jeForthVM.js at **BP0**, of its corresponding javascript function, could halt the VM if **dbg** alone (having no any following word) is being executed. Otherwise, for example, **dbg xyz**, the following word xyz will be put into debugged list so that setting breakpoint **BP1** in jeForthVM.js could halt the VM if any word in the list is being executed.
 
 >##jefvm0.html
 
-the web client html page used as demo 0 to test, debug, and demostrate this VM.
+>This is a web client html page used as a simple demonstration showing how to involve this javascript eforth VM via &lt;script src= **"./jeForthVM.js"**> &lt;/script>.
 
 >##jefvm0.bat
 
-starting a node-webkit local host html page used as demo 0 to test, debug, and demostrate this VM.
+>Double click this batch command file will start a node-webkit web server (local host) html page showing how to involve this javascript eforth VM via require( **"./jeForthVM.js"**).
 
 >##jefvm1.html
 
-the web client html page with local storage used as demo 1 to test, debug, and demostrate this VM.
+>This is a web client html page with local storage used as a demonstration showing how to involve, test, and debug jeForthVM.js.
 
 >##jefvm1.bat
 
-starting a node-webkit local host html page with local storage used as demo 1 to test, debug, and demostrate this VM.
+>Double click this batch command file will start a node-webkit web server (local host) html page with local storage used as a demonstration showing how to involve, test, and debug jeForthVM.js.
+
+>>##01. topics
+
+>>showing all the topics
+
+>>##02. default
+
+>>showing how to define new jeforth words
+
+>>##03. basic01 
+
+>>showing how to define a few basic jeforth words
+
+>>##04. basic02 
+
+>>showing how to test the basic jeforth words just defined
+
+>>##05. jsFunctionTest 
+
+>>showing how to define a java script function to be used in jeforth words
+
+>>##06. vocTest 
+
+>>showing how to define and use jeforth words in vocabularies
+
+>>##07. multiTask 
+
+>>showing how to define jeforth words for multi tasking
+
+>>##08. multiTask1 
+
+>>showing how to start multi tasks
 
 >##jefvm2run.bat
 
-running node-dev jefvm2.js (with file system) as a simple demo to run this VM.
-
->##jefvm2debug.bat
-
-running node-webkit jefvm2.html (with file system) as a simple demo to test and debug this VM.
-
->##1. topics
-
-showing all the topics
-
->##2. default
-
-showing how to define words
-
->##3. basic01 
-
-showing how to define a few basic words
-
->##4. basic02 
-
-showing how to test the basic words
-
->##5. jsFunctionTest 
-
-showing how to define a java script function to be used in words
-
->##6. vocTest 
-
-showing how to define and use new words in vocabularies
-
->##7. multiTask 
-
-showing how to define words for multi tasking
-
->##8. multiTask1 
-
-showing how to test and demonstrate for multi tasking
+>Double click this batch command file will start a process running 'node jefvm2.js' with file system I/O as yet another demonstration showing how to involve and test jeForthVM.js.
 
 >##multiTaskJavascriptEforthOutput.html
 
-a demostration output for multi tasking.
+>showing multi tasking demostration log output.
 
 >##specialEffect.htm
 
-another demostration for multi tasking.
+>another web client html page multi tasking demostration of special effect moving objects.
