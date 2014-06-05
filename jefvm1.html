@@ -927,7 +927,7 @@ dbg start taskA taskB</textarea><div class="blk"><center>
 		compiledCode=VM.setCompiledCode	(localStorage.getItem('multiTaskJavascriptEforth.compiledCode'))
 		vocs		=VM.setVocs			(localStorage.getItem('multiTaskJavascriptEforth.vocs'		  ))
 		var n=0, fs=''; for(var f in functions){fs+=f+' ', n++}
-		type(n+' js functions preloaded:\n')
+		type('\n'+n+' js functions preloaded:\n')
 		type(fs+'\n')
 		type(compiledCode.length+' compiledCode preloaded:\n')
 		type(compiledCode.join(' ')+'\n')

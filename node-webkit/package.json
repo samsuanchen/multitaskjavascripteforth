@@ -1,6 +1,6 @@
-{ "main": "../jefvm0.html",
-  "name": "jefvm0",
-  "description": "Javascript eForth VM demo 0",
+{ "main": "../jefvm1.html",
+  "name": "Multi Task Javascript eForth",
+  "description": "nw js working",
   "version": "0.0.1",
   "single-instance":false,
   "window": {"height": 800}
