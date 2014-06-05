@@ -1,38 +1,57 @@
 <html><head>
-	<title>00 jefvm demo</title>
-	<link type="text/css" rel="stylesheet" href="jefvm0.css">
-	<script src='./jeForthVM.js'></script>
-	<script>'uses strict'
-		if (typeof jeForthVM==='undefined')
-			var Z=require('./jeForthVM.js'),jeForthVM=Z.jeForthVM
-		var VM=new jeForthVM()
-		var type=function(x){
-			x=x.toString()
-			output.innerHTML+=x
-			output.scrollTop=output.scrollHeight		// scroll down
+	<title>0 jeForthVM demo</title>
+	<link rel="stylesheet" href="jefvm0.css">			<!-- html style setting for this demo -->
+	<script src='./jeForthVM.js'></script>				<!-- method 1 of involving jeForthVM.js -->
+	<script>
+		'uses strict'
+		var requireJeForthVM=function(){
+			var Z=require('./jeForthVM.js')				//-- method 2 of involving jeForthVM.js --//
+			var jeForthVM=Z.jeForthVM
 		}
-		VM.type=type
+		if (typeof jeForthVM==='undefined')
+			requireJeForthVM()
+		var VM											//-- the local variable for jeForth VM --//
+		var type=function(x){							//-- the output function of jeForth VM --//
+			output.innerHTML+=x.toString()					// output message x to web page
+			output.scrollTop=output.scrollHeight			// scroll down to show the last output
+		}
 		var toggleTagging=function(){
-			VM.tagging=chkTag.checked
+			VM.tagging=chkTag.checked						// get the checkbox value
+		}
+		var init=function(){							//-- the initial setting for jeForth VM --//
+			VM=new jeForthVM()								// get the jeForth VM
+			VM.type=type									// setup the output function of jeForth VM
+			VM.tagging=chkTag.checked						// get the checkbox value
+		}
+		var evalCode=function(){						//-- evaluate source code for jeForth VM --//
+			VM.exec(code.value)
+		}
+		var evalTest=function(){						//-- evaluate test command for jeForth VM --//
+			VM.exec(test.value)
 		}
 	</script>
-</head><body>
-	<button onclick="VM.exec(code.value)">eval</button>	<!-- btnEvalCode -->
-	jeforth source codes<br>							<!-- sourceCodes -->
+</head><body onload='init()'>
+	<button onclick="evalCode()">evaluate</button>	<!-- btnEvalCode -->
+	the following source codes of new jeforth words	<!-- sourceCodes -->
+	<button onclick="requireJeForthVM(),init()">requireJeForthVM</button>
 	<textarea id='code'>
 code . function(){	//++ jeforth_word . ( n -- )
   type(' '+dStk.pop())	// pop n from stack and type it
 } end-code
 code + function(){	//++ jeforth_word + ( a b -- a+b )
-  var b=dStk.pop()		// pop b from stack
-  dStk[dStk.length-1]+=b// add it to top of stack
+  var b=dStk.pop()	// pop b from stack
+  dStk[dStk.length-1]+=b// add b to top of stack
+} end-code
+code token function(){	//++ jeforth_word token ( -- t )
+  dStk.push(nxtTkn())	// push next token to stack
 } end-code</textarea><br>
-	<button onclick="VM.exec(test.value)">eval</button>	<!-- btnEvalTest  -->
-	jeforth test commands								<!-- testCommands -->
+	<button onclick="evalTest()">evaluate</button>	<!-- btnEvalTest  -->
+	the following test cmds for new jeforth words	<!-- testCommands -->
 	<textarea id='test'>
-1 . 2 3 + .</textarea>
-	output result
-	<input	id="directOut" type="checkbox">directOut
-	<input	id="chkTag"    type="checkbox" onclick='toggleTagging()'>tagging
-	<pre id='output'></pre>								<!-- outputResult showing "1 5 ok" -->
+1 . 2 3 + .
+token abc token def + .
+</textarea>
+	the evaluation output result is as follows
+	<input	id="chkTag" type="checkbox" onclick='toggleTagging()' checked>tagging
+	<pre id='output'></pre>							<!-- outputResult showing "1 5 ok" and abcdef ok -->
 </body></html>

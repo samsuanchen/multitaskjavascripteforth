@@ -9,7 +9,8 @@ pre, textarea	{border			: 1px solid fuchsia	;
 #code			{height			:   30%				;}
 #test			{height			:   10%				;}
 pre				{height			:   50%				;}
-inp				{color			:  blue 			;}
+inp				{background-color: #FFD 			;
+				 color			:  blue				 }
 wrn				{color			: brown				;}
 err				{color			:   red  			;}
 ok				{color			: green				;}

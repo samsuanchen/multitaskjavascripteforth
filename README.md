@@ -19,11 +19,11 @@ Please check topic 06 **vocTest** (using UP/DOWN key to select topic) in jefvm1.
 
 >##jefvm0.html
 
->This is a web client html page used as a simple demonstration showing how to involve this javascript eforth VM via &lt;script src= **"./jeForthVM.js"**> &lt;/script>.
+>This is a web client html page used as a simple demonstration showing how to involve this javascript eforth VM via the method &lt;script src= **"./jeForthVM.js"**> &lt;/script>.
 
 >##jefvm0.bat
 
->Double click this batch command file will start a node-webkit web server (local host) html page showing how to involve this javascript eforth VM via require( **"./jeForthVM.js"**).
+>Double click this batch command file will start a node-webkit web server (local host) html page showing how to involve this javascript eforth VM via both two methods, &lt;script src= **"./jeForthVM.js"**> &lt;/script> and require( **"./jeForthVM.js"**).
 
 >##jefvm1.html
 
@@ -76,3 +76,5 @@ Please check topic 06 **vocTest** (using UP/DOWN key to select topic) in jefvm1.
 >##specialEffect.htm
 
 >another web client html page multi tasking demostration of special effect moving objects.
+
+##email: samsuanchen@gmail.com
