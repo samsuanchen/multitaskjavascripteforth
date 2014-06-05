@@ -35,21 +35,21 @@
 	the following source codes of new jeforth words	<!-- sourceCodes -->
 	<button onclick="requireJeForthVM(),init()">requireJeForthVM</button>
 	<textarea id='code'>
-code . function(){	//++ jeforth_word . ( n -- )
+code 印出 function(){	//++ jeforth_word . ( n -- )
   type(' '+dStk.pop())	// pop n from stack and type it
 } end-code
-code + function(){	//++ jeforth_word + ( a b -- a+b )
+code 加 function(){	//++ jeforth_word + ( a b -- a+b )
   var b=dStk.pop()	// pop b from stack
   dStk[dStk.length-1]+=b// add b to top of stack
 } end-code
-code token function(){	//++ jeforth_word token ( -- t )
+code 字串 function(){	//++ jeforth_word token ( -- t )
   dStk.push(nxtTkn())	// push next token to stack
 } end-code</textarea><br>
 	<button onclick="evalTest()">evaluate</button>	<!-- btnEvalTest  -->
 	the following test cmds for new jeforth words	<!-- testCommands -->
 	<textarea id='test'>
-1 . 2 3 + .
-token abc token def + .
+1 印出 2 3 加 印出
+字串 abc 字串 def 加 印出
 </textarea>
 	the evaluation output result is as follows
 	<input	id="chkTag" type="checkbox" onclick='toggleTagging()' checked>tagging
