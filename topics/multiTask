@@ -185,7 +185,3 @@ code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨�
        showErr('\n'+token+' not in debbuged')
   }
 } end-code
-: task1 2 for 3000 ms $" <1_" r@ + $" >" + . next ."  <1_done>" ;
-: task2 1 for $" {2_" r@ + $" }" + . 4000 ms next ."  {2_done}" ;
-: taskA 7 for 8 r@ - 1000 * resumeAt $" [A_" r@ + $" ]" + . next ."  [A_done]" ;
-: taskB 3 for $" (B_" r@ + $" )" + . 4 r@ - 2000 * resumeAt next ."  (B_done)" ;
