@@ -1,9 +1,9 @@
-: task1 2 for 3000 ms $"  <1" r@ + $" >" + . next ."  <1 done>" ;
-: task2 1 for $"  <2" r@ + $" >" + . 4000 ms next ."  <2 done>" ;
+: task1 2 for 3000 ms $" <1" r@ + $" >" + . next ."  <1Done>" ;
+: task2 1 for $" {2" r@ + $" }" + . 4000 ms next ."  {2Done}" ;
 task1 task2
 start task1 task2
-: taskA 7 for 8 r@ - 1000 * resumeAt $"  <A" r@ + $" >" + . next
-  ."  <A done>" ;
-: taskB 3 for $"  <B" r@ + $" >" + . 4 r@ - 2000 * resumeAt next
-  ."  <B done>" ;
+: taskA 7 for 8 r@ - 1000 * resumeAt $" [a" r@ + $" ]" + . next
+  ."  [aDone]" ;
+: taskB 3 for $" (b" r@ + $" )" + . 4 r@ - 2000 * resumeAt next
+  ."  (bDone)" ;
 dbg start taskA taskB

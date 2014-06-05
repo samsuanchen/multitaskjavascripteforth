@@ -1167,15 +1167,3 @@ code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨�
   }
 } end-code
 word defined at 0,141 ok
- ok
-: task1 2 for 3000 ms $" <1_" r@ + $" >" + . next ."  <1_done>" ;
-word defined at 0,142 ok
- ok
-: task2 1 for $" {2_" r@ + $" }" + . 4000 ms next ."  {2_done}" ;
-word defined at 0,143 ok
- ok
-: taskA 7 for 8 r@ - 1000 * resumeAt $" [A_" r@ + $" ]" + . next ."  [A_done]" ;
-word defined at 0,144 ok
- ok
-: taskB 3 for $" (B_" r@ + $" )" + . 4 r@ - 2000 * resumeAt next ."  (B_done)" ;
-word defined at 0,145 ok
