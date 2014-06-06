@@ -25,7 +25,7 @@ code // function () { var n,t	 // 定義 指令 // (雙斜線) 忽略 源碼字�
 //   直到 分號指令 為止, 其間包括用 雙斜線 指令 接 空格 直到列尾的字串 當作註解	//
 // F 游標在 標題 輸入格 按 向上 或 向下 鍵, 可檢視 該標題 對應 內容 (含測試源碼)	//
 // G 游標在 標題 輸入格 按 Enter鍵 或 直接點 evaluate 按鈕, 可看 源碼解譯 結果	//
-// H 清 標題 topics 內容 點 saveText 按 F5 (google 瀏覽器重載網頁) 即恢復原	//
+// H 清 標題 01 topics 內容 點 saveText 按 F5 (google 瀏覽器重載網頁) 即恢復原	//
 //   topics 並且恢復 每標題 所對應 原始內容 (含測試源碼)			//
 // I 按 F12 (google 瀏覽器網頁追蹤) 進入 javascript 除錯視窗, 到 jeforthVM.js	//
 //   檔尾 dbg function 設斷點, 然後 					//

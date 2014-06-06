@@ -242,7 +242,7 @@ code ." function () {
 } end-code compileOnly immediate
 code emit function () { // ( charCode -- )
   var p=RegExp(String.fromCharCode(60),g)
-  print( String.fromCharCode(dStk.pop()).replace(p,String.fromCharCode(60)) )
+  print( String.fromCharCode(dStk.pop()).replace(p,'&lt;') )
 } end-code
 code cr function () {
   cr()
@@ -629,14 +629,16 @@ code ; function () {			// 定義 指令 ; ( -- ) 結束 高階指令的定義
 } end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行
 // ////////////////////////////////////////////////////////////////////////
 code directOut function(){
-  directOut.checked=true
+  VM.directOut.checked=true
 } end-code
 code bufferOut function(){
-  directOut.checked=false
+  VM.directOut.checked=false
 } end-code
 code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的 工作
-  directOut.checked=true
+  time0=new Date()
+  VM.directOut.checked=true
   while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
+    tsks.push(z)
     var w=zWrd(z) 			// 取得指令資訊 w
     if (w.src) { 			// 若是 高階指令
        setTimeout(eval(
@@ -651,9 +653,8 @@ code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的
     } else
        abort(z+' '+w.name+' not high level to start')
   }
-} end-code 
-code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)
-  var n=dStk.pop()			// 從 堆頂 取出 n
+} end-code
+code function ms(n){
   var z=compiledCode[ip++]		// 從 隨後內碼 取 指定位址
   setTimeout(eval(
      '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
@@ -664,6 +665,41 @@ code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所
   if (tracing)				// 若要顯示 追蹤檢視資訊
      print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
           +z+' '+zWrd(z).name+' '+ip+' after '+n+' ms')
+} end-code
+code function resumeAt(t){
+  n = t-(new Date()-time0)
+  var z=compiledCode[ip++]		// 從 隨後內碼 取 指定位址
+  setTimeout(eval(
+     '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
+     JSON.stringify({
+        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+     })+')})'
+  ),n), waiting=1			// n 毫秒後起動
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
+          +z+' '+zWrd(z).name+' '+ip+' at '+t+' ms')
+} end-code
+code (resumeAt) function(){ //( t -- )
+  VM.resumeAt( dStk.pop() )
+} end-code compileOnly
+code resumeAt function(){ //( t -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
+  if (compiling) {			// 若是 編議狀態
+     compileCode('(resumeAt)',		// 將 (ms) 編為內碼
+        current+','+
+        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+     ); return
+  }
+  var n=dStk.pop()-( new Date()-time0 )	// 從 堆頂 取出 t 計算 n
+  setTimeout(eval(
+     '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
+     iTib+')})'				// 設定 接續工作 源碼位址
+  ),n), waiting=1			// n 毫秒後 接續
+  if (tracing)				// 若要顯示 追蹤檢視資訊
+     print('\n'+digits(new Date()-time0,6)+' set to resumeExec '
+          +iTib+' after '+n+' ms')
+} end-code immediate
+code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)
+  VM.ms( dStk.pop() )
 } end-code compileOnly
 code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
   if (compiling) {			// 若是 編議狀態
@@ -706,6 +742,12 @@ code doLit function(){// 定義 指令 doLit ( -- n ) 將 隨後內碼 n 放上�
 } end-code compileOnly		// 使 doLit 在高階編譯狀態 才編碼
 code + function(){
   var x=dStk.pop(); dStk[dStk.length-1]+=x
+} end-code
+code - function(){
+  var x=dStk.pop(); dStk[dStk.length-1]-=x
+} end-code
+code * function(){
+  var x=dStk.pop(); dStk[dStk.length-1]*=x
 } end-code
 code $" function(){// 定義 $"  取源碼字串直到 " (雙引號)
   var s=nxtTkn('"')

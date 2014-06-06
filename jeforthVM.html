@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+   <style type="text/css">
+   /*CSS stylesheet is based on killwing's flavored markdown style:https://gist.github.com/2937864*/body{    margin: 0 auto;    font: 13px/1.231 Helvetica, Arial, sans-serif;    color: #444444;    line-height: 1;    max-width: 960px;    padding: 5px;}h1, h2, h3, h4 {    color: #111111;    font-weight: 400;}h1, h2, h3, h4, h5, p {    margin-bottom: 16px;    padding: 0;}h1 {    font-size: 28px;}h2 {    font-size: 22px;    margin: 20px 0 6px;}h3 {    font-size: 21px;}h4 {    font-size: 18px;}h5 {    font-size: 16px;}a {    color: #0099ff;    margin: 0;    padding: 0;    vertical-align: baseline;}a:link,a:visited{ text-decoration:none;}a:hover{ text-decoration:underline;}ul, ol {    padding: 0;    margin: 0;}li {    line-height: 24px;    margin-left: 44px;}li ul, li ul {    margin-left: 24px;}ul, ol {    font-size: 14px;    line-height: 20px;    max-width: 540px;}p {    font-size: 14px;    line-height: 20px;    max-width: 540px;    margin-top: 3px;}pre {    padding: 0px 4px;    max-width: 800px;    white-space: pre-wrap;    font-family: Consolas, Monaco, Andale Mono, monospace;    line-height: 1.5;    font-size: 13px;    border: 1px solid #ddd;    background-color: #f7f7f7;    border-radius: 3px;}code {    font-family: Consolas, Monaco, Andale Mono, monospace;    line-height: 1.5;    font-size: 13px;    border: 1px solid #ddd;    background-color: #f7f7f7;    border-radius: 3px;}pre code {    border: 0px;}aside {    display: block;    float: right;    width: 390px;}blockquote {    border-left:.5em solid #40AA53;    padding: 0 2em;    margin-left:0;    max-width: 476px;}blockquote  cite {    font-size:14px;    line-height:20px;    color:#bfbfbf;}blockquote cite:before {    content: '\2014 \00A0';}blockquote p {      color: #666;    max-width: 460px;}hr {    height: 1px;    border: none;    border-top: 1px dashed #0066CC}button,input,select,textarea {  font-size: 100%;  margin: 0;  vertical-align: baseline;  *vertical-align: middle;}button, input {  line-height: normal;  *overflow: visible;}button::-moz-focus-inner, input::-moz-focus-inner {  border: 0;  padding: 0;}button,input[type="button"],input[type="reset"],input[type="submit"] {  cursor: pointer;  -webkit-appearance: button;}input[type=checkbox], input[type=radio] {  cursor: pointer;}/* override default chrome & firefox settings */input:not([type="image"]), textarea {  -webkit-box-sizing: content-box;  -moz-box-sizing: content-box;  box-sizing: content-box;}input[type="search"] {  -webkit-appearance: textfield;  -webkit-box-sizing: content-box;  -moz-box-sizing: content-box;  box-sizing: content-box;}input[type="search"]::-webkit-search-decoration {  -webkit-appearance: none;}label,input,select,textarea {  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  font-size: 13px;  font-weight: normal;  line-height: normal;  margin-bottom: 18px;}input[type=checkbox], input[type=radio] {  cursor: pointer;  margin-bottom: 0;}input[type=text],input[type=password],textarea,select {  display: inline-block;  width: 210px;  padding: 4px;  font-size: 13px;  font-weight: normal;  line-height: 18px;  height: 18px;  color: #808080;  border: 1px solid #ccc;  -webkit-border-radius: 3px;  -moz-border-radius: 3px;  border-radius: 3px;}select, input[type=file] {  height: 27px;  line-height: 27px;}textarea {  height: auto;}/* grey out placeholders */:-moz-placeholder {  color: #bfbfbf;}::-webkit-input-placeholder {  color: #bfbfbf;}input[type=text],input[type=password],select,textarea {  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;  transition: border linear 0.2s, box-shadow linear 0.2s;  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);}input[type=text]:focus, input[type=password]:focus, textarea:focus {  outline: none;  border-color: rgba(82, 168, 236, 0.8);  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);}/* buttons */button {  display: inline-block;  padding: 4px 14px;  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  font-size: 13px;  line-height: 18px;  -webkit-border-radius: 4px;  -moz-border-radius: 4px;  border-radius: 4px;  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  background-color: #0064cd;  background-repeat: repeat-x;  background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));  background-image: -moz-linear-gradient(top, #049cdb, #0064cd);  background-image: -ms-linear-gradient(top, #049cdb, #0064cd);  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));  background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);  background-image: -o-linear-gradient(top, #049cdb, #0064cd);  background-image: linear-gradient(top, #049cdb, #0064cd);  color: #fff;  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);  border: 1px solid #004b9a;  border-bottom-color: #003f81;  -webkit-transition: 0.1s linear all;  -moz-transition: 0.1s linear all;  transition: 0.1s linear all;  border-color: #0064cd #0064cd #003f81;  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);}button:hover {  color: #fff;  background-position: 0 -15px;  text-decoration: none;}button:active {  -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);  -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);  box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);}button::-moz-focus-inner {  padding: 0;  border: 0;}/* table  */table {    border-spacing: 0;    border: 1px solid #ccc;}td, th{    border: 1px solid #ccc;    padding: 5px;}/* code syntax highlight.Documentation: http://www.mdcharm.com/documentation/code_syntax_highlighting.html#custom_your_own */pre .literal,pre .comment,pre .template_comment,pre .diff .header,pre .javadoc {    color: #008000;}pre .keyword,pre .css .rule .keyword,pre .winutils,pre .javascript .title,pre .nginx .title,pre .subst,pre .request,pre .status {    color: #0000FF;    font-weight: bold}pre .number,pre .hexcolor,pre .python .decorator,pre .ruby .constant {    color: #0000FF;}pre .string,pre .tag .value,pre .phpdoc,pre .tex .formula {    color: #D14}pre .title,pre .id {    color: #900;    font-weight: bold}pre .javascript .title,pre .lisp .title,pre .clojure .title,pre .subst {    font-weight: normal}pre .class .title,pre .haskell .type,pre .vhdl .literal,pre .tex .command {    color: #458;    font-weight: bold}pre .tag,pre .tag .title,pre .rules .property,pre .django .tag .keyword {    color: #000080;    font-weight: normal}pre .attribute,pre .variable,pre .lisp .body {    color: #008080}pre .regexp {    color: #009926}pre .class {    color: #458;    font-weight: bold}pre .symbol,pre .ruby .symbol .string,pre .lisp .keyword,pre .tex .special,pre .prompt {    color: #990073}pre .built_in,pre .lisp .title,pre .clojure .built_in {    color: #0086b3}pre .preprocessor,pre .pi,pre .doctype,pre .shebang,pre .cdata {    color: #999;    font-weight: bold}pre .deletion {    background: #fdd}pre .addition {    background: #dfd}pre .diff .change {    background: #0086b3}pre .chunk {    color: #aaa}pre .markdown .header {    color: #800;    font-weight: bold;}pre .markdown .blockquote {    color: #888;}pre .markdown .link_label {    color: #88F;}pre .markdown .strong {    font-weight: bold;}pre .markdown .emphasis {    font-style: italic;}
+   </style>
+   
+   
+</head>
+<body>
+    <h1>jeforthVM.js <strong>相關資源 簡要說明</strong></h1>
+
+<h2>0. <strong>exec(tib)</strong> 外部源碼 解譯 <strong>outer sourceCode interpreter</strong></h2>
+
+<ol>
+<li><strong>tib</strong> -- 外部源碼 內容 </li>
+<li><strong>iTib</strong> -- 外部源碼 解譯位址</li>
+<li><strong>waiting</strong> -- 執意跳出迴圈 (單步 或 多功)</li>
+<li><strong>error</strong> -- 錯誤跳出迴圈</li>
+<li><strong>resumeExec()</strong> 外部源碼解譯 進入 迴圈</li>
+</ol>
+
+<h2>1. <strong>call(ip)</strong> 內部編碼 解譯 <strong>inner compiledCode interpreter</strong></h2>
+
+<ol>
+<li><strong>compiledCode</strong> -- 內部編碼 內容</li>
+<li><strong>ip</strong> -- 內部編碼 解譯位址</li>
+<li><strong>rStk</strong> -- 回返堆疊, 主要 存放 回返上層呼叫指令 的 後續 ip</li>
+<li><strong>waiting</strong> -- 執意跳出迴圈 (單步 或 多功)</li>
+<li><strong>error</strong> -- 錯誤跳出迴圈</li>
+<li><strong>resumeCall()</strong> 內部編碼解譯 進入 迴圈</li>
+</ol>
+
+<h2>2. <strong>dStk</strong> -- js 表列 (list) 當作 <strong>資料堆疊</strong> 在指令之間 傳遞資料</h2>
+
+<ol>
+<li><strong>dStk=[]</strong> -- 清空 資料堆疊 (預設)</li>
+<li><strong>dStk.push(t)</strong> -- 將 t 放上 資料堆疊, t 可是 整數, 浮點數, 字串, 表列, 物件 ...</li>
+<li><strong>dStk.length--</strong> -- 若 資料堆疊 非空的, 丟掉最後放上的 資料</li>
+<li><strong>t=dStk[dStk.length]</strong> -- 讀取 最後放上 資料堆疊 的 t</li>
+<li><strong>t=dStk.pop()</strong> -- 從 資料堆疊 取出 t</li>
+</ol>
+
+<h2>3. <strong>rStk</strong> -- js 表列 (list) 當作 <strong>回返堆疊</strong> 存放 回返上層呼叫指令 的 後續 ip</h2>
+
+<ol>
+<li><strong>rStk=[]</strong> -- 清空 回返堆疊 (預設)</li>
+<li><strong>rStk.push(ip)</strong> -- 將 ip 放上 回返堆疊</li>
+<li><strong>t=rStk[rStk.length]</strong> -- 讀取 最後放上 回返堆疊 的 t</li>
+<li><strong>ip=rStk.pop()</strong> -- 從 回返堆疊 取出 ip</li>
+</ol>
+
+<h2>4. <strong>base</strong> -- js 變數 (variable) 解譯整數字串 或 印出整數字串 時的 <strong>整數進制基數</strong></h2>
+
+<ol>
+<li><strong>base=10</strong> -- 十進制 (預設)</li>
+<li><strong>base=16</strong> -- 十六進制</li>
+<li><strong>base=2</strong> -- 二進制</li>
+</ol>
+
+<h2>5. <strong>nxtTkn</strong> -- js 涵式 (function) 取 隨後 以空格區隔的 <strong>源碼字串</strong></h2>
+
+<ol>
+<li><strong>t=nxtTkn()</strong> -- 取 以空格區隔的 隨後源碼字串 t</li>
+<li><strong>t=nxtTkn(&#39;&quot;&#39;)</strong> -- 取 空格之後 到 雙引號 &quot; 之間的 隨後源碼字串 t</li>
+<li><strong>t=nxtTkn(&#39;end-code&#39;)</strong> -- 取 空格之後 到 end-code 之間的 隨後源碼字串 t</li>
+</ol>
+
+<h2>6. <strong>fndWrd</strong> -- js 涵式 (function) 取 名稱字串 所對應的 <strong>指令位址</strong></h2>
+
+<ol>
+<li><strong>z=fndWrd(t)</strong> -- 取 字串 t 對應 最後定義 指令位址 z (若未定義, 值 undefined)</li>
+</ol>
+
+<h2>7. <strong>compiledCode</strong> -- js 表列 (list) 存放 <strong>編碼</strong> (高階指令所呼叫 指令 及 資料)</h2>
+
+<ol>
+<li><strong>compiledCode.length</strong> -- 下個 編碼 的 存放位址</li>
+<li><strong>compiledCode.push(w)</strong> -- 將 編碼 w 加入 compiledCode</li>
+</ol>
+
+<h2>8. <strong>newWrd</strong> -- js 涵式 (function) 定義 新 <strong>低階指令</strong></h2>
+
+<ol>
+<li>newWrd(&#39;<strong>doLit</strong>&#39;,function(){dStk.push(compiledCode[ip++])})</li>
+<li>newWrd(&#39;<strong>exit</strong>&#39;,function(){ip=rStk.pop()})</li>
+</ol>
+
+<h2>9. <strong>compileCode</strong> -- js 涵式 (function) 將 所呼叫 指令/資料 <strong>編碼加入</strong> compiledCode</h2>
+
+<ol>
+<li>compileCode(&#39;<strong>doLit</strong>&#39;,5) -- 編碼 將 doLit 及 5 加入 compiledCode</li>
+<li>compileCode(&#39;<strong>exit</strong>&#39;) -- 編碼 將 exit 加入 compiledCode</li>
+</ol>
+
+<h2>10. <strong>newWrd</strong> -- js 涵式 (function) 定義 新 <strong>高階指令</strong></h2>
+
+<ol>
+<li><strong>xt=compiledCode.length</strong></li>
+<li>compileCode(&#39;doLit&#39;,5),compileCode(&#39;exit&#39;)</li>
+<li>newWrd(&#39;five&#39;,<strong>xt</strong>)</li>
+</ol>
+
+<h2>11. <strong>lstWrd</strong> -- js 變數 (variable) 指向 <strong>最後定義的指令</strong></h2>
+
+<ol>
+<li>lstWrd.<strong>compileOnly</strong>=1 -- 最後定義的指令 只能在編譯狀態下執行</li>
+<li>lstWrd.<strong>immediate</strong>=1 -- 最後定義的指令 也能在編譯狀態下執行</li>
+</ol>
+
+<h2>12. <strong>vocs</strong> -- js 表列 (list) 蒐集 所有的 <strong>詞彙</strong></h2>
+
+<ol>
+<li>vocs[iv].<strong>wrds</strong> -- js 表列 (list) 蒐集 詞彙 vocs[iv] 中 所有的 指令</li>
+<li>vocs[iv].<strong>index</strong> -- js 物件 (object) 詞彙 詞彙 vocs[iv] 中 指令的 定義位址 表列</li>
+<li>vocs[<strong>current</strong>] -- 蒐集 新 指令 的 當前詞彙</li>
+<li>vocs[<strong>context</strong>[i]] -- 搜尋 指令 的 指定詞彙 i = 0, 1 2 , ...</li>
+</ol>
+
+</body>
+</html>
