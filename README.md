@@ -2,6 +2,8 @@
 
 https://github.com/samsuanchen/multitaskjavascripteforth/
 
+google 網路硬碟 分享 [multitaskJeforth20140606.zip](https://drive.google.com/file/d/0B8CIi1bBEsWtNmxpOEo4ZFRHTlk/edit?usp=sharing "jeforthVM")
+
 **jeForthVM.js** is a javascript source code running as a **multi task jeforth VM** with initially three jeforth words **'root'**, **'code'**, and **'dbg'** on web client or server html pages. This VM could be involved by &lt;script src= **"./jeForthVM.js"**> &lt;/script>. Please check demos: **jefvm0.html**, **jefvm1.htm1**, or **movingEffect.htm**. A node.js (or node-webkit) server program could involve this VM, via require( **"./jeForthVM.js"**). Please check demos: **jefvm0.bat**, **jefvm1.bat**, or **jefvm2run.bat**.
 
 >##The word 'root'
