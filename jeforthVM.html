@@ -13,6 +13,15 @@
 
 <h2>0. <strong>exec(tib)</strong> 外部源碼 解譯 <strong>outer sourceCode interpreter</strong></h2>
 
+<pre><code>    var VM=new jeforthVM()
+    VM.type=function(msg){
+      process.stdout.write(msg)
+    }
+    VM.exec(&#39;code . function(){print(&quot; &quot;+dataStack.pop())}end-code&#39;)
+    VM.exec(&#39;code cr function(){print(&quot;\n&quot;)}end-code&#39;)
+    VM.exec(&#39;5 . cr&#39;)
+</code></pre>
+
 <ol>
 <li><strong>tib</strong> -- 外部源碼 內容 </li>
 <li><strong>iTib</strong> -- 外部源碼 解譯位址</li>
@@ -26,29 +35,29 @@
 <ol>
 <li><strong>compiledCode</strong> -- 內部編碼 內容</li>
 <li><strong>ip</strong> -- 內部編碼 解譯位址</li>
-<li><strong>rStk</strong> -- 回返堆疊, 主要 存放 回返上層呼叫指令 的 後續 ip</li>
+<li><strong>returnStack</strong> -- 回返堆疊, 主要 存放 回返上層呼叫指令 的 後續 ip</li>
 <li><strong>waiting</strong> -- 執意跳出迴圈 (單步 或 多功)</li>
 <li><strong>error</strong> -- 錯誤跳出迴圈</li>
 <li><strong>resumeCall()</strong> 內部編碼解譯 進入 迴圈</li>
 </ol>
 
-<h2>2. <strong>dStk</strong> -- js 表列 (list) 當作 <strong>資料堆疊</strong> 在指令之間 傳遞資料</h2>
+<h2>2. <strong>dataStack</strong> -- js 表列 (list) 當作 <strong>資料堆疊</strong> 在指令之間 傳遞資料</h2>
 
 <ol>
-<li><strong>dStk=[]</strong> -- 清空 資料堆疊 (預設)</li>
-<li><strong>dStk.push(t)</strong> -- 將 t 放上 資料堆疊, t 可是 整數, 浮點數, 字串, 表列, 物件 ...</li>
-<li><strong>dStk.length--</strong> -- 若 資料堆疊 非空的, 丟掉最後放上的 資料</li>
-<li><strong>t=dStk[dStk.length]</strong> -- 讀取 最後放上 資料堆疊 的 t</li>
-<li><strong>t=dStk.pop()</strong> -- 從 資料堆疊 取出 t</li>
+<li><strong>dataStack=[]</strong> -- 清空 資料堆疊 (預設)</li>
+<li><strong>dataStack.push(t)</strong> -- 將 t 放上 資料堆疊, t 可是 整數, 浮點數, 字串, 表列, 物件 ...</li>
+<li><strong>dataStack.length--</strong> -- 若 資料堆疊 非空的, 丟掉最後放上的 資料</li>
+<li><strong>t=dataStack[dataStack.length-1]</strong> -- 讀取 最後放上 資料堆疊 的 t</li>
+<li><strong>t=dataStack.pop()</strong> -- 從 資料堆疊 取出 t</li>
 </ol>
 
-<h2>3. <strong>rStk</strong> -- js 表列 (list) 當作 <strong>回返堆疊</strong> 存放 回返上層呼叫指令 的 後續 ip</h2>
+<h2>3. <strong>returnStack</strong> -- js 表列 (list) 當作 <strong>回返堆疊</strong> 存放 回返上層呼叫指令 的 後續 ip</h2>
 
 <ol>
-<li><strong>rStk=[]</strong> -- 清空 回返堆疊 (預設)</li>
-<li><strong>rStk.push(ip)</strong> -- 將 ip 放上 回返堆疊</li>
-<li><strong>t=rStk[rStk.length]</strong> -- 讀取 最後放上 回返堆疊 的 t</li>
-<li><strong>ip=rStk.pop()</strong> -- 從 回返堆疊 取出 ip</li>
+<li><strong>returnStack=[]</strong> -- 清空 回返堆疊 (預設)</li>
+<li><strong>returnStack.push(ip)</strong> -- 將 ip 放上 回返堆疊</li>
+<li><strong>t=returnStack[returnStack.length-1]</strong> -- 讀取 最後放上 回返堆疊 的 t</li>
+<li><strong>ip=returnStack.pop()</strong> -- 從 回返堆疊 取出 ip</li>
 </ol>
 
 <h2>4. <strong>base</strong> -- js 變數 (variable) 解譯整數字串 或 印出整數字串 時的 <strong>整數進制基數</strong></h2>
@@ -59,18 +68,18 @@
 <li><strong>base=2</strong> -- 二進制</li>
 </ol>
 
-<h2>5. <strong>nxtTkn</strong> -- js 涵式 (function) 取 隨後 以空格區隔的 <strong>源碼字串</strong></h2>
+<h2>5. <strong>nextToken</strong> -- js 涵式 (function) 取 隨後 以空格區隔的 <strong>源碼字串</strong></h2>
 
 <ol>
-<li><strong>t=nxtTkn()</strong> -- 取 以空格區隔的 隨後源碼字串 t</li>
-<li><strong>t=nxtTkn(&#39;&quot;&#39;)</strong> -- 取 空格之後 到 雙引號 &quot; 之間的 隨後源碼字串 t</li>
-<li><strong>t=nxtTkn(&#39;end-code&#39;)</strong> -- 取 空格之後 到 end-code 之間的 隨後源碼字串 t</li>
+<li><strong>t=nextToken()</strong> -- 取 以空格區隔的 隨後源碼字串 t</li>
+<li><strong>t=nextToken(&#39;&quot;&#39;)</strong> -- 取 空格之後 到 雙引號 &quot; 之間的 隨後源碼字串 t</li>
+<li><strong>t=nextToken(&#39;end-code&#39;)</strong> -- 取 空格之後 到 end-code 之間的 隨後源碼字串 t</li>
 </ol>
 
-<h2>6. <strong>fndWrd</strong> -- js 涵式 (function) 取 名稱字串 所對應的 <strong>指令位址</strong></h2>
+<h2>6. <strong>findWord</strong> -- js 涵式 (function) 取 名稱字串 所對應的 <strong>指令位址</strong></h2>
 
 <ol>
-<li><strong>z=fndWrd(t)</strong> -- 取 字串 t 對應 最後定義 指令位址 z (若未定義, 值 undefined)</li>
+<li><strong>z=findWord(t)</strong> -- 取 字串 t 對應 最後定義 指令位址 z (若未定義, 值 undefined)</li>
 </ol>
 
 <h2>7. <strong>compiledCode</strong> -- js 表列 (list) 存放 <strong>編碼</strong> (高階指令所呼叫 指令 及 資料)</h2>
@@ -80,11 +89,11 @@
 <li><strong>compiledCode.push(w)</strong> -- 將 編碼 w 加入 compiledCode</li>
 </ol>
 
-<h2>8. <strong>newWrd</strong> -- js 涵式 (function) 定義 新 <strong>低階指令</strong></h2>
+<h2>8. <strong>newWord</strong> -- js 涵式 (function) 定義 新 <strong>低階指令</strong></h2>
 
 <ol>
-<li>newWrd(&#39;<strong>doLit</strong>&#39;,function(){dStk.push(compiledCode[ip++])})</li>
-<li>newWrd(&#39;<strong>exit</strong>&#39;,function(){ip=rStk.pop()})</li>
+<li>newWord(&#39;<strong>doLit</strong>&#39;,function(){dataStack.push(compiledCode[ip++])})</li>
+<li>newWord(&#39;<strong>exit</strong>&#39;,function(){ip=returnStack.pop()})</li>
 </ol>
 
 <h2>9. <strong>compileCode</strong> -- js 涵式 (function) 將 所呼叫 指令/資料 <strong>編碼加入</strong> compiledCode</h2>
@@ -94,25 +103,25 @@
 <li>compileCode(&#39;<strong>exit</strong>&#39;) -- 編碼 將 exit 加入 compiledCode</li>
 </ol>
 
-<h2>10. <strong>newWrd</strong> -- js 涵式 (function) 定義 新 <strong>高階指令</strong></h2>
+<h2>10. <strong>newWord</strong> -- js 涵式 (function) 定義 新 <strong>高階指令</strong></h2>
 
 <ol>
 <li><strong>xt=compiledCode.length</strong></li>
 <li>compileCode(&#39;doLit&#39;,5),compileCode(&#39;exit&#39;)</li>
-<li>newWrd(&#39;five&#39;,<strong>xt</strong>)</li>
+<li>newWord(&#39;five&#39;,<strong>xt</strong>)</li>
 </ol>
 
-<h2>11. <strong>lstWrd</strong> -- js 變數 (variable) 指向 <strong>最後定義的指令</strong></h2>
+<h2>11. <strong>lastWord</strong> -- js 變數 (variable) 指向 <strong>最後定義的指令</strong></h2>
 
 <ol>
-<li>lstWrd.<strong>compileOnly</strong>=1 -- 最後定義的指令 只能在編譯狀態下執行</li>
-<li>lstWrd.<strong>immediate</strong>=1 -- 最後定義的指令 也能在編譯狀態下執行</li>
+<li>lastWord.<strong>compileOnly</strong>=1 -- 最後定義的指令 只能在編譯狀態下執行</li>
+<li>lastWord.<strong>immediate</strong>=1 -- 最後定義的指令 也能在編譯狀態下執行</li>
 </ol>
 
 <h2>12. <strong>vocs</strong> -- js 表列 (list) 蒐集 所有的 <strong>詞彙</strong></h2>
 
 <ol>
-<li>vocs[iv].<strong>wrds</strong> -- js 表列 (list) 蒐集 詞彙 vocs[iv] 中 所有的 指令</li>
+<li>vocs[iv].<strong>words</strong> -- js 表列 (list) 蒐集 詞彙 vocs[iv] 中 所有的 指令</li>
 <li>vocs[iv].<strong>index</strong> -- js 物件 (object) 詞彙 詞彙 vocs[iv] 中 指令的 定義位址 表列</li>
 <li>vocs[<strong>current</strong>] -- 蒐集 新 指令 的 當前詞彙</li>
 <li>vocs[<strong>context</strong>[i]] -- 搜尋 指令 的 指定詞彙 i = 0, 1 2 , ...</li>
