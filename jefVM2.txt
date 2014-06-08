@@ -1,6 +1,6 @@
-code . function(){ print(" "+dStk.pop()) }end-code
+code . function(){ print(" "+dataStack.pop()) }end-code
 word defined at 0,4 ok
-code + function(){ var x=dStk.pop(); dStk[dStk.length-1]+=x }end-code
+code + function(){ var x=dataStack.pop(); dataStack[dataStack.length-1]+=x }end-code
 word defined at 0,5 ok
 2 3 4 + + . 9 ok
 code . function(){ // [0,4] . ( n -- ) 從堆疊 印出 n
@@ -22,704 +22,20 @@ code . function(){ // [0,4] . ( n -- ) 從堆疊 印出 n
 } end-code
 words defined at 0,6 0,4 ok
  ok
-1 2 3 . . . 3 2 1 ok
- ok
-code + function(){ // [0,5] + ( a b -- c ) 堆疊 取出 a b 相加 將結果 c 放回
-///////////////////////////////////////////////////////////////////////////
-// end-code 之後 1 2 3 + + . 會將 2 3 相加 然後將 1 5 相加 最後印出 6
-///////////////////////////////////////////////////////////////////////////
-  var b=dStk.pop(); dStk[dStk.length-1]+=b
-} end-code
-words defined at 0,7 0,5 ok
- ok
-1 2 3 + + . 6 ok
- ok
-code $" function(){ // [0,6] $" ( <str>" -- s ) 空格後到 " 前字串 s 放堆疊
-///////////////////////////////////////////////////////////////////////////
-// end-code 之後 $" abc" $" def" + . 會將 字串 abc 與 def 相加 印出 abcedf
-///////////////////////////////////////////////////////////////////////////
-  dStk.push(nxtTkn('"'))
-} end-code
-word defined at 0,8 ok
- ok
-$" abc" $" def" + . abcdef ok
- ok
-code - function(){ // [0,7] - ( a b -- c ) 堆疊 取出 a b 相減 將結果 c 放回
-///////////////////////////////////////////////////////////////////////////
-// end-code 之後 15.5 2.5 - . 會 印出 13
-///////////////////////////////////////////////////////////////////////////
-  var n=dStk.pop(); dStk[dStk.length-1]-=n
-} end-code
-word defined at 0,9 ok
- ok
-15.5 2.5 - . 13 ok
- ok
-code * function(){ // [0,8] * ( a b -- c ) 堆疊 取 a b 相乘 將結果 c 放回
-///////////////////////////////////////////////////////////////////////////
-// end-code 之後 10 3 * . 會 印出 30
-///////////////////////////////////////////////////////////////////////////
-  var n=dStk.pop(); dStk[dStk.length-1]*=n
-} end-code
-word defined at 0,10 ok
- ok
-10 3 * . 30 ok
- ok
-code / function(){ // [0,9] / ( a b -- c ) 堆疊 取 a b 相除 將結果 c 放回
-///////////////////////////////////////////////////////////////////////////
-// end-code 之後 10 3 / . 會 印出 3.3333333333333335
-///////////////////////////////////////////////////////////////////////////
-  var n=dStk.pop(); dStk[dStk.length-1]/=n
-} end-code
-word defined at 0,11 ok
- ok
-10 3 / . 3.3333333333333335 ok
- ok
-code % function(){ // [0,10] % ( a b -- c ) 對 a 取 b 的餘數 結果 為 c
-///////////////////////////////////////////////////////////////////////////
-// end-code 之後 10 3 / . 會 印出 30
-///////////////////////////////////////////////////////////////////////////
-  var n=dStk.pop(); dStk[dStk.length-1]%=n
-} end-code
-word defined at 0,12 ok
- ok
-13 3 % . 1 ok
- ok
-code hex function(){ // [0,11] hex ( -- ) 用 十六進制 解讀/列印 整數
-///////////////////////////////////////////////////////////////////////////
-// end-code 之後 128 hex . 會將 十進制 的 128 用 十六進制 列印為 80
-///////////////////////////////////////////////////////////////////////////
-  base=16
-} end-code
-word defined at 0,13 ok
- ok
-128 hex . 80 ok
- ok
-code decimal function(){ // [0,12] decimal ( -- ) 用 10 進制 解讀/列印 整數
-///////////////////////////////////////////////////////////////////////////
-// end-code 之後 100 decimal . 會將 十六進制 的 100 用 十進制 列印為 256
-///////////////////////////////////////////////////////////////////////////
-  base=10
-} end-code
-word defined at 0,14 ok
- ok
-100 decimal . 256 ok
-1 2 3 . . . 3 2 1 ok
- ok
-1 2 3 + + . 6 ok
- ok
-$" abc" $" def" + . abcdef ok
- ok
-15.5 2.5 - . 13 ok
- ok
-10 3 * . 30 ok
- ok
-10 3 / . 3.3333333333333335 ok
- ok
-13 3 % . 1 ok
- ok
-128 hex . 80 ok
- ok
-100 decimal . 256 ok
+1 2 3 . . .
+Abort at word ".", because dStk is not defined
+1 2 3 . . .
+Abort at word ".", because dStk is not defined
 code immediate function () {	 // 定義 指令 immediate
   lstWrd.immediate=1		 // 使 最後定義的指令 在高階編譯狀態 也能執行
 } end-code
-word defined at 0,15 ok
+word defined at 0,7 ok
  ok
 code // function () { var n,t	 // 定義 指令 // (雙斜線) 忽略 源碼字串 到列尾
   iTib += (n= (t=tib.substr(iTib)).indexOf('\n') )>=0 ? n : t.length
 } end-code immediate		 // 使 雙斜線 指令 在高階編譯狀態 也能執行
-word defined at 0,16 ok
-// // // // // // // // // // // // // // // // // // // // // // // //	// ok
-//		請 先 讀 此 說 明	R E A D M E   F I R S T			// ok
-// // // // // // // // // // // // // // // // // // // // // // // //	// ok
-//   此 極簡符式系統 很原始, 剛啟動時 只有 主要指令 code, 相關說明 簡述如下	// ok
-// A 此例 先用 code 定義 符式指令 immediate 及 雙斜線, 希定義 雙斜線 用作註解	//	 ok
-//   注意! 雙斜線 後必須 空格, 這樣 接下來的源碼字串 就會當作 註解 直到列尾		// ok
-// B 用 code 定義的 是所謂 符式低階指令, 以 javascript 匿名 function 描述動作	// ok
-// C code 語法: 其後是 指令名稱 接下來到 end-code 是 不含參數的 匿名 function	// ok
-//   符式系統 的 指令名稱 通常 沒有限制 可以是 不含空格及跳格的 任何字串		// ok
-//   符式指令 間 通常都用 堆疊 dStk 互傳資訊, 不需透過 function 參數 傳資訊	// ok
-//   匿名 function 依循 javascript 語法, 雙斜線 到列尾 的字串 原來就用作註解	// ok
-//   只是 這樣的註解 僅限 function 內, 為使 code 定義外 也能 用作註解 特此定義	// ok
-// D 注意! code 之後 若為字串 function 乃特例, 此 function 並不當作 指令名稱	// ok
-//   這時 從 function 到 end-code 前 直接用來 定義 javascript 含名 function	// ok
-//   依 javascript 語法 也可宣告參數, 這些 function 可被 符式低階指令 呼叫	// ok
-//   但注意! 呼叫時 需前置 VM. 例如: 定義了 xxx(str) 可用 VM.xxx('hello') 呼叫	// ok
-// E 後續 用 code 所定義 冒號 : 及 分號 ; 倆指令 乃特別用來以定義 符式高階指令	// ok
-//   冒號指令 接 空格 然後才是 新指令名稱, 之後 就可用 已定義 符式指令 描述動作	// ok
-//   直到 分號指令 為止, 其間包括用 雙斜線 指令 接 空格 直到列尾的字串 當作註解	// ok
-// F 游標在 標題 輸入格 按 向上 或 向下 鍵, 可檢視 該標題 對應 內容 (含測試源碼)	// ok
-// G 游標在 標題 輸入格 按 Enter鍵 或 直接點 evaluate 按鈕, 可看 源碼解譯 結果	// ok
-// H 清 標題 01 topics 內容 點 saveText 按 F5 (google 瀏覽器重載網頁) 即恢復原	// ok
-//   topics 並且恢復 每標題 所對應 原始內容 (含測試源碼)			// ok
-// I 按 F12 (google 瀏覽器網頁追蹤) 進入 javascript 除錯視窗, 到 jeforthVM.js	// ok
-//   檔尾 dbg function 設斷點, 然後 					// ok
-//   在 text area 程式碼 插入 dbg 指令 點 evalute, 執行到 dbg 即可進行追蹤除錯	// ok
-// J 下面 debug 指令 讓 源碼隨後指令 執行前先印出 "debugging" (可到 dbg 設斷點)	// ok
-// // // // // // // // // // // // // // // // // // // // // // // //	// ok
-code debug function() {	// 定義 指令 debug ( <指令名稱> -- )
-  var token=nxtTkn()	// 從 隨後源碼 取 token (以空格區隔的下一個字串)
-  var z=fndWrd(token)	// 取 所對應 指令位址 [vid,wid]
-  if (z) {
-    if (0>debugged.indexOf(z=z.join())) // 如果 不在 待追蹤指令陣列
-      debugged.push(z)			// 將 指令位址 加入 待追蹤指令陣列
-    else
-      print(z+' already in debugged')	// 已在 待追蹤指令陣列
-  } else
-      abort('debug '+token+' undefined')// 沒有 所對應 符式指令 資訊
-} end-code
-word defined at 0,17 ok
- ok
-code find function () { // 定義 指令 find ( <指令名稱> -- 指令位址 )
-  dStk.push( fndWrd( nxtTkn() ) )	// 隨後源碼 指令名稱 的 指令位址 上堆疊
-} end-code
-word defined at 0,18 ok
- ok
-code ' function () { // 定義 指令 ' ( <指令名稱> -- 指令位址 )
-  var z, t
-  var z=fndWrd(t=nxtTkn())	// 隨後源碼 指令名稱 的 指令位址 z
-  if (z) dStk.push(z)		// 若找到 z 就放上堆疊
-  else abort(t+' not found')	// 否則 就 abort
-} end-code
-word defined at 0,19 ok
- ok
-code alias function () { // 定義 指令 alias ( 指令位址 <指令別名> -- )
-  var w=zWrd(dStk.pop())	// 取 已定義指令 w
-  newWrd(nxtTkn(),w.xt)	// 定義 隨後源碼 指令別名
-  if (w.src)         lstWrd.src		=w.src		// 高階源碼
-  if (w.compileOnly) lstWrd.compileOnly	=w.compileOnly	// 在高階編譯狀態 才執行
-  if (w.immediate)   lstWrd.immediate	=w.immediate	// 在高階編譯狀態 能執行
-  if (w.wrds)        lstWrd.wrds	=w.wrds	// 詞彙指令陣列
-  if (w.dictionary)  lstWrd.dictionary	=w.dictionary	// 詞彙指令索引
-} end-code
-word defined at 0,20 ok
- ok
-code : function () { // 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
-  src		= ''			// 高階指令 源碼
-  hSrc		= iTib-2		// 高階指令 源碼字串起點
-  hName		= nxtTkn()		// 高階指令 名稱
-  hXt		= compiledCode.length 	// 高階指令 編碼起點
-  compiling	= 1			// 高階指令 編譯狀態 進入
-} end-code
-word defined at 0,21 ok
- ok
-code compileOnly function () { // 定義 指令 compileOnly ( -- )
-  lstWrd.compileOnly=1		// 使 最後定義指令 高階編譯狀態 才編碼
-} end-code
-word defined at 0,22 ok
- ok
-code ret function () { // 定義 指令 ret ( -- ) 結束被呼叫的 高階指令
-  ip=rStk.pop()		// 從 return stack 取出 ip
-} end-code compileOnly	// 使 ret 在高階編譯狀態 才編碼
-word defined at 0,23 ok
-code doLit function () { // 定義 指令 doLit ( -- n ) 將 隨後編碼 n 放上堆疊
-  var n=compiledCode[ip++]	// 取 ip 所指 編碼 n
-  dStk.push(n)			// 將 n 放上堆疊
-} end-code compileOnly		// 使 doLit 在高階編譯狀態 才編碼
-word defined at 0,24 ok
-code ; function () { // 定義 指令 ; ( -- ) 結束 高階指令的定義
-  compileCode("ret")			// 編譯 ret 為 高階指令 內碼
-  compiling=0				// 高階指令 編譯狀態 結束
-  var src=tib.substring(hSrc,iTib)	// 源碼字串
-  newWrd(hName,hXt,src)		// 以 名稱 內碼起點 原碼字串 定義 高階指令
-} end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行
-word defined at 0,25 ok
-code + function () { // 定義 指令 + ( a b -- a+b ) 加法 可為數字 或 字串
-  var x=dStk.pop(); dStk[dStk.length-1]+=x
-} end-code
-words defined at 0,26 0,7 0,5 ok
- ok
-code - function () { // 定義 指令 - ( a b -- a-b ) 減法
-  var x=dStk.pop(); dStk[dStk.length-1]-=x
-} end-code
-words defined at 0,27 0,9 ok
- ok
-code * function () { // 定義 指令 * ( a b -- a*b ) 乘法
-  var x=dStk.pop(); dStk[dStk.length-1]*=x
-} end-code
-words defined at 0,28 0,10 ok
- ok
-code / function () { // 定義 指令 / ( a b -- a/b ) 除法
-  var x=dStk.pop(); dStk[dStk.length-1]/=x
-} end-code
-words defined at 0,29 0,11 ok
- ok
-code % function () { // 定義 指令 % ( a b -- a%b ) 餘數
-  var x=dStk.pop(); dStk[dStk.length-1]%=x
-} end-code
-words defined at 0,30 0,12 ok
- ok
-code . function () { // 定義 指令 . ( n -- ) 列印 n 可為 數字, 字串, 陣列
-  print(" "+dStk.pop())
-} end-code
-words defined at 0,31 0,6 0,4 ok
- ok
-code dup function () { // 定義 指令 dup ( n -- n n )
-  dStk.push(dStk[dStk.length-1])
-} end-code
-word defined at 0,32 ok
- ok
-code .s function () { // 定義 指令 .s ( -- ) 檢視 堆疊數值
-  print(' '+(dStk.join(' ')||'empty'))
-} end-code
-word defined at 0,33 ok
- ok
-code wrds function () { // 定義 wrds 檢視 所有 指令名稱 (可能重複)
-  var v=vocs[context[0]]
-  print('\n '+v.wrds.map(	// 從 wrds 陣列 針對每個指令 w
-    function(w){return w?w.name:''}	// 取其 名稱
-  ).join(' '))			// 列印
-} end-code
-word defined at 0,34 ok
- ok
-wrds // 檢視 所有 指令名稱
-  root code dbg . + . + $" - * / % hex decimal immediate // debug find ' alias : compileOnly ret doLit ; + - * / % . dup .s wrds ok
-code uniquewrds function () { // 定義 uniquewrds 檢視 所有 指令名稱 (不重複)
-  var v=vocs[context[0]], t='\n ', w
-  for(w in v.dictionary)	// 從 dictionary 物件 針對每個指令 w
-    t+=' '+w			// 採用	空格 區隔
-  print(t)			// 列印
-} end-code
-word defined at 0,35 ok
- ok
-uniquewrds // 檢視 所有 指令名稱 (不重複)
-  ok
-: sq	// 定義 sq 計算 堆頂數值 的平方
-  dup	// 複製	堆頂數值
-  *	// 相乘
-;	// 結束	定義
-word defined at 0,36 ok
-5 sq .	// 列印出 5 平方 ==> 25 25 ok
-' alias alias 同義
-word defined at 0,37 ok
- ok
-' sq 同義 平方
-word defined at 0,38 ok
- ok
-' .  同義 印出
-word defined at 0,39 ok
- ok
-5 平方 印出 25 ok
- ok
-: 2sq	// 定義 2sq 計算 堆頂數值 平方的 2 倍
-  sq	// 計算	堆頂數值 的平方
-  2 *	// 取其	2 倍
-;	// 結束	定義
-word defined at 0,40 ok
-3 2sq . // 列印出 3 平方的2倍 ==> 18 18 ok
-' 2sq 同義 平方的2倍
-word defined at 0,41 ok
- ok
-3 平方的2倍 印出 18 ok
- ok
-code char function () { // 定義 char 取隨後 token 字串的 起首字符
-  var c=nxtTkn().substr(0,1)	// 隨後	token 的 起首字符 c
-  if(compiling)			// 檢視	是否 編譯狀態
-    compileCode('doLit',c)	// 若是	編譯狀態 就將 doLit 及 c 編碼
-  else dStk.push(c)		// 否則	就將 字符 放上堆疊
-} end-code immediate		// 宣告	char 編譯狀態 能執行
-word defined at 0,42 ok
-char a .	// 列印	字符 a a ok
-: a char a . ;	// 定義	a 列印出 字符 a
-word defined at 0,43 ok
-a		// 列印	字符 a a ok
-code see function () { // 定義 see 檢視 指定名稱 指令 的定義源碼
-  var msg		// 輸出	字串
-  var name=nxtTkn()	// 隨後	token 當作 指令名稱
-  var z=fndWrd(name)
-  if (z) {		// 檢視	記錄 id 的陣列 是否存在
-    z=z.split(',').map(function(x){return parseInt(x)})
-    var v=vocs[z[0]], w=v.wrds[z[1]] // 取其 word
-    if (w.src)		// 檢視	高階定義源碼 是否存在
-	msg=':'+w.src	// 若是	輸出字串 用 高階定義源碼
-    else
-	msg='code '+name// 否則	字串 接 指令名稱
-	+' '+w.xt	//	字串 接 低階定義源碼
-	+' end-'	//	字串 接 'end-'
-	+'code'		//	字串 接 'code'
-    if (w.compileOnly)	// 檢視	是否 compileOnly
-      msg+=' compileOnly'	// 字串	加接 compileOnly
-    if (w.immediate  )	// 檢視	是否 immediate
-      msg+=' immediate'		// 字串	加接 immediate
-  } else
-      msg=name+' undefined'	// 字串	顯示 未定義
-  print('\n'+msg)		// 列印	字串
-} end-code
-word defined at 0,44 ok
- ok
-see see	// 檢視 指令 see 的定義源碼
-code see function () { // 定義 see 檢視 指定名稱 指令 的定義源碼
-  var msg		// 輸出	字串
-  var name=nxtTkn()	// 隨後	token 當作 指令名稱
-  var z=fndWrd(name)
-  if (z) {		// 檢視	記錄 id 的陣列 是否存在
-    z=z.split(',').map(function(x){return parseInt(x)})
-    var v=vocs[z[0]], w=v.wrds[z[1]] // 取其 word
-    if (w.src)		// 檢視	高階定義源碼 是否存在
-	msg=':'+w.src	// 若是	輸出字串 用 高階定義源碼
-    else
-	msg='code '+name// 否則	字串 接 指令名稱
-	+' '+w.xt	//	字串 接 低階定義源碼
-	+' end-'	//	字串 接 'end-'
-	+'code'		//	字串 接 'code'
-    if (w.compileOnly)	// 檢視	是否 compileOnly
-      msg+=' compileOnly'	// 字串	加接 compileOnly
-    if (w.immediate  )	// 檢視	是否 immediate
-      msg+=' immediate'		// 字串	加接 immediate
-  } else
-      msg=name+' undefined'	// 字串	顯示 未定義
-  print('\n'+msg)		// 列印	字串
-} end-code ok
-see a	// 檢視 指令 a   定義源碼
-:
-: a char a . ; ok
-see 2sq	// 檢視 指令 2sq 的定義源碼
-:
-: 2sq	// 定義 2sq 計算 堆頂數值 平方的 2 倍
-  sq	// 計算	堆頂數值 的平方
-  2 *	// 取其	2 倍
-; ok
-see ;	// 檢視 指令 ;   的定義源碼
-code ; function () { // 定義 指令 ; ( -- ) 結束 高階指令的定義
-  compileCode("ret")			// 編譯 ret 為 高階指令 內碼
-  compiling=0				// 高階指令 編譯狀態 結束
-  var src=tib.substring(hSrc,iTib)	// 源碼字串
-  newWrd(hName,hXt,src)		// 以 名稱 內碼起點 原碼字串 定義 高階指令
-} end-code compileOnly immediate ok
-code (abort") function () {
-  abort(compiledCode[ip++])
-} end-code compileOnly
-word defined at 0,45 ok
- ok
-code abort" function () {
-  var msg=nxtTkn('"')
-  if (compiling) compileCode('(abort")',msg)
-  else abort(msg)
-} end-code compileOnly immediate
-word defined at 0,46 ok
- ok
-// abort" 1st testing the word abort" ok
-// : x abort" 2nd testing the word abort" ; x ok
-code function xxx (x) { // 定義 js function xxx (並非 定義 指令 xxx)
-  print(x+' is running')
-} end-code
-javascript function xxx (x) defined ok
- ok
-// see xxx	// 檢視 字串 xxx 的定義源碼 ==> undefined ok
-code yyy function () {	// 定義 指令 zzz
-  VM.xxx(' yyy')		// 呼叫 javascript function xxx (帶 參數)
-} end-code
-word defined at 0,47 ok
- ok
-yyy // 呼叫 javascript function xxx(' yyy') 印出 'yyy is running' yyy is running ok
-code (do) function () { // ( bgn lmt -- )
-  var bgn=dStk.pop()
-  rStk.push(dStk.pop()), rStk.push(bgn)
-} end-code compileOnly
-word defined at 0,48 ok
- ok
-code (loop) function () {
-  var t=rStk.length-1, s=t-1
-  if (rStk[s]>++rStk[t]) {
-    ip=compiledCode[ip]
-    return
-  }
-  ip++, rStk.pop(), rStk.pop()
-} end-code compileOnly
-word defined at 0,49 ok
- ok
-code do function () {
-  compileCode('(do)')
-  dStk.push(compiledCode.length)
-} end-code immediate compileOnly
-word defined at 0,50 ok
- ok
-code loop function () {
-  compileCode('(loop)',dStk.pop())
-} end-code immediate compileOnly
-word defined at 0,51 ok
- ok
-code r@ function () {
-  dStk.push(rStk[rStk.length-1])
-} end-code
-word defined at 0,52 ok
- ok
-' r@ alias i
-word defined at 0,53 ok
- ok
-code j function () {
-  dStk.push(rStk[rStk.length-3])
-} end-code
-word defined at 0,54 ok
- ok
-code (.") function () {
-  print(compiledCode[ip++])
-} end-code compileOnly
-word defined at 0,55 ok
- ok
-code ." function () {
-  compileCode('(.")',nxtTkn('"'))
-} end-code compileOnly immediate
-word defined at 0,56 ok
- ok
-code emit function () { // ( charCode -- )
-  var p=RegExp(String.fromCharCode(60),g)
-  print( String.fromCharCode(dStk.pop()).replace(p,String.fromCharCode(60)) )
-} end-code
-word defined at 0,57 ok
- ok
-code cr function () {
-  cr()
-} end-code
-word defined at 0,58 ok
- ok
-code drop function () { // ( n -- )
-  dStk.length--
-} end-code
-word defined at 0,59 ok
- ok
-code .r function () { // ( n w -- )
-  var w=dStk.pop(), s=dStk.pop().toString(base)
-  print('         '.substr(0,w-s.length)+s)
-} end-code
-word defined at 0,60 ok
- ok
-: x1 ." 9*9 table using do-loop"
-
-  10 1
-
-  do cr 10 1
-
-     do j i * 3 .r
-
-     loop
-
-  loop
-
-;
-word defined at 0,61 ok
- ok
-x19*9 table using do-loop
-  1  2  3  4  5  6  7  8  9
-  2  4  6  8 10 12 14 16 18
-  3  6  9 12 15 18 21 24 27
-  4  8 12 16 20 24 28 32 36
-  5 10 15 20 25 30 35 40 45
-  6 12 18 24 30 36 42 48 54
-  7 14 21 28 35 42 49 56 63
-  8 16 24 32 40 48 56 64 72
-  9 18 27 36 45 54 63 72 81 ok
- ok
-code >r function () {
-  rStk.push(dStk.pop())
-} end-code compileOnly
-word defined at 0,62 ok
- ok
-code r> function () {
-  dStk.push(rStk.pop())
-} end-code compileOnly
-word defined at 0,63 ok
- ok
-code for function () {
-  compileCode('>r'), dStk.push(compiledCode.length)
-} end-code compileOnly immediate
-word defined at 0,64 ok
- ok
-code (next) function () {
-  var rTop=--rStk[rStk.length-1]
-  if (0>rTop) {
-    ip++, rStk.length--
-    return
-  }
-  ip=compiledCode[ip]
-} end-code compileOnly
-word defined at 0,65 ok
- ok
-code next function () {
-  compileCode('(next)',dStk.pop())
-} end-code compileOnly immediate
-word defined at 0,66 ok
- ok
-: x2 ." 9*9 table using for-next" 8
-
-  for 9 r@ - cr 8
-
-      for dup 9 r@ - * 3 .r
-
-      next drop
-
-  next
-
-;
-word defined at 0,67 ok
- ok
-x29*9 table using for-next
-  1  2  3  4  5  6  7  8  9
-  2  4  6  8 10 12 14 16 18
-  3  6  9 12 15 18 21 24 27
-  4  8 12 16 20 24 28 32 36
-  5 10 15 20 25 30 35 40 45
-  6 12 18 24 30 36 42 48 54
-  7 14 21 28 35 42 49 56 63
-  8 16 24 32 40 48 56 64 72
-  9 18 27 36 45 54 63 72 81 ok
- ok
-code zbranch function () {
-  if (dStk.pop()) ip++
-  else ip=compiledCode[ip]
-} end-code compileOnly
-word defined at 0,68 ok
- ok
-code branch function () {
-  ip=compiledCode[ip]
-} end-code compileOnly
-word defined at 0,69 ok
- ok
-code if function () {
-  compileCode('zbranch')
-  dStk.push(compiledCode.length)
-  compile(-1)
-} end-code compileOnly immediate
-word defined at 0,70 ok
- ok
-code else function () {
-  compiledCode[dStk.pop()]=compiledCode.length+2
-  compileCode('branch')
-  dStk.push(compiledCode.length)
-  compile(-1)
-} end-code compileOnly immediate
-word defined at 0,71 ok
- ok
-code then function () {
-  compiledCode[dStk.pop()]=compiledCode.length
-} end-code compileOnly immediate
-word defined at 0,72 ok
- ok
-: x3 dup . ."  is "
-
-  if ." non-"
-
-  then ." zero" ;
-word defined at 0,73 ok
- ok
-0 x3 0 is zero ok
- ok
-5 x3 5 is non-zero ok
- ok
-: x4 dup . ."  is "
-
-  if ." non-zero"
-
-  else ." zero"
-
-  then ;
-word defined at 0,74 ok
- ok
-0 x4 0 is zero ok
- ok
-5 x4 5 is non-zero ok
- ok
-code begin function () {
-  dStk.push(compiledCode.length)
-} end-code compileOnly immediate
-word defined at 0,75 ok
- ok
-' ret alias exit
-word defined at 0,76 ok
- ok
-code again function () {
-  compileCode('branch',dStk.pop())
-} end-code compileOnly immediate
-word defined at 0,77 ok
- ok
-code until function () {
-  compileCode('zbranch',dStk.pop())
-} end-code compileOnly immediate
-word defined at 0,78 ok
- ok
-code while function () {
-  compileCode('zbranch')
-  dStk.push(compiledCode.length)
-  compile(-1)
-} end-code compileOnly immediate
-word defined at 0,79 ok
- ok
-code repeat function () {
-  var w=dStk.pop()
-  compileCode('branch',dStk.pop())
-  compiledCode[w]=compiledCode.length
-} end-code compileOnly immediate
-word defined at 0,80 ok
- ok
-' ret alias exit
-words defined at 0,81 0,76 ok
- ok
-code 1- function () {
-  dStk[dStk.length-1]--
-} end-code
-word defined at 0,82 ok
- ok
-code 2- function () {
-  dStk[dStk.length-1]-=2
-} end-code
-word defined at 0,83 ok
- ok
-code 1+ function () {
-  dStk[dStk.length-1]++
-} end-code
-word defined at 0,84 ok
- ok
-code 2+ function () {
-  dStk[dStk.length-1]+=2
-} end-code
-word defined at 0,85 ok
- ok
-code ?dup function () {
-  var top=dStk[dStk.length-1]
-  if (top)
-    dStk.push(top)
-} end-code
-word defined at 0,86 ok
- ok
-code changeName function () {
-  var v=vocs[current], ws=v.wrds
-  ws[ws.length].name=nxtTkn()
-} end-code
-word defined at 0,87 ok
- ok
-code xxx function () {
-  var top=dStk.pop()
-  dStk[dStk.length-1]=top>dStk[dStk.length-1]
-} end-code
-word defined at 0,88 ok
- ok
-: x5 9
-
-  begin ?dup
-
-  while dup . 1-
-
-  repeat ;
-word defined at 0,89 ok
- ok
-x5 // 印出 9 8 7 6 5 4 3 2 1 9 8 7 6 5 4 3 2 1 ok
-code $" function () { // 定義 $"  取源碼字串直到 "
-  var s=nxtTkn('"')
-  if (compiling) compileCode('doLit',s)
-  else dStk.push(s)
-} end-code
-words defined at 0,90 0,8 ok
- ok
-$" abc" $" def" + . // 印出 abcdef abcdef ok
-code = function () {
-  dStk.push(dStk.pop()===dStk.pop())
-} end-code
-word defined at 0,91 ok
- ok
-: x6 9 begin dup . 1- dup -1 = until ;
-word defined at 0,92 ok
- ok
-x6 // 印出 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 ok
+word defined at 0,8
+Abort at word "immediate", because lstWrd is not defined
 code function xxx(msg) {
   print(msg)
 } end-code
@@ -728,23 +44,23 @@ javascript function xxx(msg) defined ok
 code xxx function() {
   xxx('hello')
 } end-code
-words defined at 0,93 0,88 ok
+word defined at 0,9 ok
  ok
 xxx
 Abort at word "xxx", because xxx is not defined
 code immediate function () {	// 定義 指令 immediate
-  lstWrd.immediate=1		// 使 最後定義的指令 在高階編譯狀態 能執行
+  lastWord.immediate=1		// 使 最後定義的指令 在高階編譯狀態 能執行
 } end-code
-words defined at 0,94 0,15 ok
+words defined at 0,10 0,7 ok
  ok
 code // function () { var n,t	// 定義 指令 // (雙斜線) 忽略源碼字串到 列尾
-  iTib += (n= (t=tib.substr(iTib)).indexOf('\n') )>=0 ? n : t.length
+  iTib += at(tib.substr(iTib),'\n')
 } end-code immediate		// 使 雙斜線 指令 在高階編譯狀態 能執行
-words defined at 0,95 0,16 ok
-// /////////// wrds preload ( include previous 2 wrds /////////////// // ok
+words defined at 0,11 0,8 ok
+// /////////// words preload ( include previous 2 words /////////////// // ok
 code debug function() {	// 定義 指令 debug ( <指令名稱> -- )
-  var tkn=nxtTkn()	// 從 隨後源碼 取 tkn (以空格區隔的下一個字串)
-  var z=fndWrd(tkn)	// 取 所對應 指令位址 [vid,wid]
+  var tkn=nextToken()	// 從 隨後源碼 取 tkn (以空格區隔的下一個字串)
+  var z=findWord(tkn)	// 取 所對應 指令位址 [vid,wid]
   if (z) {
     if (0>debugged.indexOf(z=z.join())) // 如果 不在 待追蹤指令陣列
       debugged.push(z)			// 將 指令位址 加入 待追蹤指令陣列
@@ -753,233 +69,267 @@ code debug function() {	// 定義 指令 debug ( <指令名稱> -- )
   } else
       abort('debug '+tkn+' undefined')// 沒有 所對應 符式指令 資訊
 } end-code
-words defined at 0,96 0,17 ok
+word defined at 0,12 ok
  ok
 code ' function () { // 定義 指令 ' ( <指令名稱> -- 指令位址 )
   var z, t
-  var z=fndWrd(t=nxtTkn())	// 取 隨後源碼 指令名稱 的 指令位址 z
-  if (z) dStk.push(z)		// 若找到 z 就放上堆疊
+  var z=findWord(t=nextToken())	// 取 隨後源碼 指令名稱 的 指令位址 z
+  if (z) dataStack.push(z)		// 若找到 z 就放上堆疊
   else abort(t+' not found')	// 否則 就 abort
 } end-code
-words defined at 0,97 0,19 ok
+word defined at 0,13 ok
  ok
 code alias function () { // 定義 指令 alias ( 指令位址 <指令別名> -- )
-  var w=zWrd(dStk.pop())	// 取 已定義指令 w
-  newWrd(nxtTkn(),w.xt)	// 定義 隨後源碼 指令別名
-  if (w.src)         lstWrd.src	 	=w.src		// 高階源碼
-  if (w.compileOnly) lstWrd.compileOnly	=w.compileOnly	// 在高階編譯狀態 才執行
-  if (w.immediate)   lstWrd.immediate	=w.immediate	// 在高階編譯狀態 能執行
-  if (w.wrds)       lstWrd.wrds	=w.wrds	// 詞彙指令陣列
-  if (w.index)  lstWrd.index	=w.index	// 詞彙指令索引
+  var w=zWord(dataStack.pop())	// 取 已定義指令 w
+  newWord(nextToken(),w.xt)	// 定義 隨後源碼 指令別名
+  if (w.src)         lastWord.src	 	=w.src		// 高階源碼
+  if (w.compileOnly) lastWord.compileOnly	=w.compileOnly	// 在高階編譯狀態 才執行
+  if (w.immediate)   lastWord.immediate	=w.immediate	// 在高階編譯狀態 能執行
+  if (w.words)       lastWord.words	=w.words	// 詞彙指令陣列
+  if (w.index)  lastWord.index	=w.index	// 詞彙指令索引
 } end-code
-words defined at 0,98 0,20 ok
+word defined at 0,14 ok
  ok
 ' // alias \
-word defined at 0,99 ok
+word defined at 0,15 ok
  ok
-code words function(){ // 定義 指令 wrds ( -- ) 列印 當前詞彙 所有 指令名稱
+code words function(){ // 定義 指令 words ( -- ) 列印 當前詞彙 所有 指令名稱
   var v=vocs[context[0]]
-  print('\nin '+v.name+' have wrds:\n '+v.wrds.map(	// 列印 每個指令
+  print('\nin '+v.name+' have words:\n '+v.words.map(	// 列印 每個指令
     function(w){return w?w.name:''}			// 其 名稱
   ).join(' '))						// 以 空格 區隔
 } end-code
-word defined at 0,100 ok
+word defined at 0,16 ok
  ok
 code : function () { // 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
   src		= ''			// 高階指令 源碼
   hSrc		= iTib-2		// 高階指令 源碼字串起點
-  hName		= nxtTkn()		// 高階指令 名稱
+  hName		= nextToken()		// 高階指令 名稱
   hXt		= compiledCode.length 	// 高階指令 編碼起點
   compiling	= 1			// 高階指令 編譯狀態 進入
 } end-code
-words defined at 0,101 0,21 ok
+word defined at 0,17 ok
  ok
 code compileOnly function () { // 定義 指令 compileOnly ( -- )
-  lstWrd.compileOnly=1		// 使 最後定義指令 高階編譯狀態 才編碼
+  lastWord.compileOnly=1		// 使 最後定義指令 高階編譯狀態 才編碼
 } end-code
-words defined at 0,102 0,22 ok
+word defined at 0,18 ok
  ok
 code ret function () { // 定義 指令 ret ( -- ) 結束被呼叫的 高階指令
-  ip=rStk.pop()		// 從 return stack 取出 ip
+  ip=returnStack.pop()		// 從 return stack 取出 ip
 } end-code compileOnly	// 使 ret 在高階編譯狀態 才編碼
-words defined at 0,103 0,23 ok
+word defined at 0,19 ok
 code doLit function () { // 定義 指令 doLit ( -- n ) 將 隨後編碼 n 放上堆疊
   var n=compiledCode[ip++]	// 取 ip 所指 編碼 n
-  dStk.push(n)			// 將 n 放上堆疊
+  dataStack.push(n)			// 將 n 放上堆疊
 } end-code compileOnly		// 使 doLit 在高階編譯狀態 才編碼
-words defined at 0,104 0,24 ok
+word defined at 0,20 ok
 code ; function () { // 定義 指令 ; ( -- ) 結束 高階指令的定義
   compileCode("ret")			// 編譯 ret 為 高階指令 內碼
   compiling=0				// 高階指令 編譯狀態 結束
   var src=tib.substring(hSrc,iTib)	// 源碼字串
-  newWrd(hName,hXt,src)		// 以 名稱 內碼起點 原碼字串 定義 高階指令
+  newWord(hName,hXt,src)		// 以 名稱 內碼起點 原碼字串 定義 高階指令
 } end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行
-words defined at 0,105 0,25 ok
+word defined at 0,21 ok
 // //////////////////////// vocabulary test ////////////////////////// // ok
+code function order(msg) {
+  msg=msg||''
+  print(msg)
+  showWarning('\ncurrent:'+current+'/'+vocs[current].name+
+    '  context:'+context+'/'+context.map(function(iv){
+    return vocs[iv].name
+  }))
+} end-code
+javascript function order(msg) defined ok
+ ok
 code vocabulary function(){ var v, i, vid, w
-  v=vocs[current], i=v.wrds.length, vid=vocs.length
-  newWrd(nxtTkn(),eval('(function(){context[0]='+vid+'})')) // add new word
-  w=v.wrds[i], w.vid=vid, w.wrds=[0], w.index={}
+  v=vocs[current], i=v.words.length, vid=vocs.length
+  // add new word
+  newWord(nextToken(),eval('(function(){context[0]='+vid+',VM.order()})'))
+  w=v.words[i], w.vid=vid, w.words=[0], w.index={}
   vocs.push(w) // add new vocabulary
 } end-code immediate
-word defined at 0,106 ok
+word defined at 0,22 ok
  ok
 code definitions function(){
-  current=context[0]
+  current=context[0],VM.order()
 } end-code
-word defined at 0,107 ok
+word defined at 0,23 ok
  ok
 code also function () {
-  context.unshift(context[0])
+  context.unshift(context[0]),VM.order()
 } end-code
-word defined at 0,108 ok
+word defined at 0,24 ok
  ok
 code previous function () {
-  context.shift()
+  context.shift(),VM.order()
 } end-code
-word defined at 0,109 ok
+word defined at 0,25 ok
  ok
 vocabulary voc1 // 定義 詞彙 voc1
-word defined at 0,110 ok
+word defined at 0,26 ok
 vocabulary voc2 // 定義 詞彙 voc2
-word defined at 0,111 ok
+word defined at 0,27 ok
 vocabulary voc3 // 定義 詞彙 voc3
-word defined at 0,112 ok
-voc1 definitions ok
+word defined at 0,28 ok
+voc1 definitions
+current:0/root  context:1,0/voc1,root
+current:1/voc1  context:1,0/voc1,root ok
  ok
 code a1 function () {
-  print(' a1 in voc1')
+  VM.order(' a1 in voc1')
 } end-code
 word defined at 1,1 ok
  ok
 code b1 function () {
-  print(' b1 in voc1')
+  VM.order(' b1 in voc1')
 } end-code
 word defined at 1,2 ok
  ok
 code c1 function () {
-  print(' c1 in voc1')
+  VM.order(' c1 in voc1')
 } end-code
 word defined at 1,3 ok
  ok
-voc2 definitions ok
+voc2 definitions
+current:1/voc1  context:2,0/voc2,root
+current:2/voc2  context:2,0/voc2,root ok
  ok
 code a22 function () {
-  shwWrn(' a22 in voc2')
+  VM.order(' a22 in voc2')
 } end-code
 word defined at 2,1 ok
  ok
 code b22 function () {
-  shwWrn(' b22 in voc2')
+  VM.order(' b22 in voc2')
 } end-code
 word defined at 2,2 ok
  ok
 code c22 function () {
-  shwWrn(' c22 in voc2')
+  VM.order(' c22 in voc2')
 } end-code
 word defined at 2,3 ok
  ok
-voc3 definitions ok
+voc3 definitions
+current:2/voc2  context:3,0/voc3,root
+current:3/voc3  context:3,0/voc3,root ok
  ok
 code a333 function () {
-  shwErr(' a333 in voc3')
+  VM.order(' a333 in voc3')
 } end-code
 word defined at 3,1 ok
  ok
 code b333 function () {
-  shwErr(' b333 in voc3')
+  VM.order(' b333 in voc3')
 } end-code
 word defined at 3,2 ok
  ok
 code c333 function () {
-  shwErr(' c333 in voc3')
+  VM.order(' c333 in voc3')
 } end-code
 word defined at 3,3 ok
  ok
 voc1 words
-in voc1 have wrds:
+current:3/voc3  context:1,0/voc1,root
+in voc1 have words:
   a1 b1 c1 ok
  ok
 voc2 words
-in voc2 have wrds:
+current:3/voc3  context:2,0/voc2,root
+in voc2 have words:
   a22 b22 c22 ok
  ok
 voc3 words
-in voc3 have wrds:
+current:3/voc3  context:3,0/voc3,root
+in voc3 have words:
   a333 b333 c333 ok
  ok
-voc2 definitions ok
+voc2 definitions
+current:3/voc3  context:2,0/voc2,root
+current:2/voc2  context:2,0/voc2,root ok
  ok
 code a1 function () {
-  shwWrn(' a1 in voc2')
+  VM.order(' a1 in voc2')
 } end-code
 word defined at 2,4 ok
  ok
-voc1 a1 also a1 in voc1 ok
+voc1 a1 also
+current:2/voc2  context:1,0/voc1,root a1 in voc1
+current:2/voc2  context:1,0/voc1,root
+current:2/voc2  context:1,1,0/voc1,voc1,root ok
  ok
-voc2 b22 a1 b22 in voc2 a1 in voc2 ok
+voc2 b22 a1
+current:2/voc2  context:2,1,0/voc2,voc1,root b22 in voc2
+current:2/voc2  context:2,1,0/voc2,voc1,root a1 in voc2
+current:2/voc2  context:2,1,0/voc2,voc1,root ok
  ok
-voc3 c333 a1 c333 in voc3 a1 in voc1 ok
+voc3 dbg c333 a1
+current:2/voc2  context:3,1,0/voc3,voc1,root
+000007 tracing 3,3 c333  dataStack: empty  returnStack: empty c333 in voc3
+current:2/voc2  context:3,1,0/voc3,voc1,root a1 in voc1
+current:2/voc2  context:3,1,0/voc3,voc1,root ok
  ok
-previous voc3 a1
+previous voc3 a1 // a1 could no longer be found
+current:2/voc2  context:1,0/voc1,root
+current:2/voc2  context:3,0/voc3,root
 "a1" undefined
 code immediate function(){// 定義 指令 immediate		( -- )
-  lstWrd.immediate=1			// 使 最後定義的指令 在高階編譯狀態 能執行
+  lastWord.immediate=1			// 使 最後定義的指令 在高階編譯狀態 能執行
 } end-code
-words defined at 0,113 0,94 0,15 ok
+words defined at 0,29 0,10 0,7 ok
  ok
 code compileOnly function(){// 定義 指令 compileOnly	( -- )
-  lstWrd.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
+  lastWord.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
 } end-code
-words defined at 0,114 0,102 0,22 ok
+words defined at 0,30 0,18 ok
  ok
 code // function(){ var n,t// 定義 指令 // (雙斜線) 忽略源碼字串到 列尾
   iTib += (n= (t=tib.substr(iTib)).indexOf('\n') )>=0 ? n : t.length
 } end-code immediate			// 使 雙斜線 指令 在高階編譯狀態 能執行
-words defined at 0,115 0,95 0,16 ok
+words defined at 0,31 0,11 0,8 ok
 // //////////////////////////////////////////////////////////////////////// ok
 code : function(){// 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
   src		= ''			// 高階指令 源碼
   hSrc		= iTib-2		// 高階指令 源碼字串起點
-  hName		= nxtTkn()		// 高階指令 名稱
+  hName		= nextToken()		// 高階指令 名稱
   hXt		= compiledCode.length 	// 高階指令 編碼起點
   compiling	= 1			// 高階指令 編譯狀態 進入
 } end-code
-words defined at 0,116 0,101 0,21 ok
+words defined at 0,32 0,17 ok
  ok
 code ret function(){// 定義 指令 ret ( -- ) 結束被呼叫的 高階指令
-  ip=rStk.pop()				// 從 return stack 取出 ip
+  ip=returnStack.pop()				// 從 return stack 取出 ip
 } end-code compileOnly			// 使 ret 在高階編譯狀態 才編碼
-words defined at 0,117 0,103 0,23 ok
+words defined at 0,33 0,19 ok
 code ; function () {			// 定義 指令 ; ( -- ) 結束 高階指令的定義
   compileCode("ret")			// 編譯 ret 為 高階指令 內碼
   compiling=0				// 高階指令 編譯狀態 結束
   var src=tib.substring(hSrc,iTib)	// 源碼字串
-  newWrd(hName,hXt,src)			// 以 名稱 內碼起點 原碼字串 定義 高階指令
+  newWord(hName,hXt,src)			// 以 名稱 內碼起點 原碼字串 定義 高階指令
 } end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行
-words defined at 0,118 0,105 0,25 ok
+words defined at 0,34 0,21 ok
 // //////////////////////////////////////////////////////////////////////// ok
 code directOut function(){
   VM.directOut.checked=true
 } end-code
-word defined at 0,119 ok
+word defined at 0,35 ok
  ok
 code bufferOut function(){
   VM.directOut.checked=false
 } end-code
-word defined at 0,120 ok
+word defined at 0,36 ok
  ok
 code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的 工作
   time0=new Date()
   VM.directOut.checked=true
-  while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
-    tsks.push(z)
-    var w=zWrd(z) 			// 取得指令資訊 w
+  while(z=findWord( nextToken() )) { 	// 搜尋指令位址 z
+    tasks.push(z)
+    var w=zWord(z) 			// 取得指令資訊 w
     if (w.src) { 			// 若是 高階指令
        setTimeout(eval(
 	  '(function(){resumeTask('+	// 以 resumeTask 為 起動涵式
 	  JSON.stringify({
-	     rStk:[ip],dStk:[],z:z,ip:w.xt// 設定 起動工作 所需資訊
+	     returnStack:[ip],dataStack:[],z:z,ip:w.xt// 設定 起動工作 所需資訊
 	  })+')})'
        ),10), waiting=1			// 10 毫秒後起動
        if (tracing)			// 若要顯示 追蹤檢視資訊
@@ -989,19 +339,19 @@ code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的
        abort(z+' '+w.name+' not high level to start')
   }
 } end-code
-word defined at 0,121 ok
+word defined at 0,37 ok
  ok
 code function ms(n){
   var z=compiledCode[ip++]		// 從 隨後內碼 取 指定位址
   setTimeout(eval(
      '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
      JSON.stringify({
-        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+        returnStack:returnStack,dataStack:dataStack,z:z,ip:ip	// 設定 接續工作 所需資訊
      })+')})'
   ),n), waiting=1			// n 毫秒後起動
   if (tracing)				// 若要顯示 追蹤檢視資訊
      print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
-          +z+' '+zWrd(z).name+' '+ip+' after '+n+' ms')
+          +z+' '+zWord(z).name+' '+ip+' after '+n+' ms')
 } end-code
 javascript function ms(n) defined ok
  ok
@@ -1011,28 +361,28 @@ code function resumeAt(t){
   setTimeout(eval(
      '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
      JSON.stringify({
-        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+        returnStack:returnStack,dataStack:dataStack,z:z,ip:ip	// 設定 接續工作 所需資訊
      })+')})'
   ),n), waiting=1			// n 毫秒後起動
   if (tracing)				// 若要顯示 追蹤檢視資訊
      print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
-          +z+' '+zWrd(z).name+' '+ip+' at '+t+' ms')
+          +z+' '+zWord(z).name+' '+ip+' at '+t+' ms')
 } end-code
 javascript function resumeAt(t) defined ok
  ok
 code (resumeAt) function(){ //( t -- )
-  VM.resumeAt( dStk.pop() )
+  VM.resumeAt( dataStack.pop() )
 } end-code compileOnly
-word defined at 0,122 ok
+word defined at 0,38 ok
  ok
 code resumeAt function(){ //( t -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
   if (compiling) {			// 若是 編議狀態
      compileCode('(resumeAt)',		// 將 (ms) 編為內碼
         current+','+
-        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+        vocs[current].words.length	// 當前正定義的指令 隨後 也編為內碼
      ); return
   }
-  var n=dStk.pop()-( new Date()-time0 )	// 從 堆頂 取出 t 計算 n
+  var n=dataStack.pop()-( new Date()-time0 )	// 從 堆頂 取出 t 計算 n
   setTimeout(eval(
      '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
      iTib+')})'				// 設定 接續工作 源碼位址
@@ -1041,21 +391,21 @@ code resumeAt function(){ //( t -- )// 暫停工作 (n 毫秒後接續執行 iTi
      print('\n'+digits(new Date()-time0,6)+' set to resumeExec '
           +iTib+' after '+n+' ms')
 } end-code immediate
-word defined at 0,123 ok
+word defined at 0,39 ok
  ok
 code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)
-  VM.ms( dStk.pop() )
+  VM.ms( dataStack.pop() )
 } end-code compileOnly
-word defined at 0,124 ok
+word defined at 0,40 ok
  ok
 code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
   if (compiling) {			// 若是 編議狀態
      compileCode('(ms)',		// 將 (ms) 編為內碼
         current+','+
-        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+        vocs[current].words.length	// 當前正定義的指令 隨後 也編為內碼
      ); return
   }
-  var n=dStk.pop()			// 從 堆頂 取出 n
+  var n=dataStack.pop()			// 從 堆頂 取出 n
   setTimeout(eval(
      '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
      iTib+')})'				// 設定 接續工作 源碼位址
@@ -1064,101 +414,101 @@ code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所�
      print('\n'+digits(new Date()-time0,6)+' set to resumeExec '
           +iTib+' after '+n+' ms')
 } end-code immediate
-word defined at 0,125 ok
+word defined at 0,41 ok
  ok
 // //////////////////////////////////////////////////////////////////////// ok
 code (for) function(){
-  rStk.push(dStk.pop())
+  returnStack.push(dataStack.pop())
 } end-code
-word defined at 0,126 ok
+word defined at 0,42 ok
  ok
 code for function(){
-  compileCode('(for)'), dStk.push(compiledCode.length)
+  compileCode('(for)'), dataStack.push(compiledCode.length)
 } end-code compileOnly immediate
-words defined at 0,127 0,64 ok
+word defined at 0,43 ok
  ok
 code (next) function () {
-  if ( 0 > (--rStk[rStk.length-1]) )
-     ip++, rStk.length--
+  if ( 0 > (--returnStack[returnStack.length-1]) )
+     ip++, returnStack.length--
   else
      ip=compiledCode[ip]
 } end-code compileOnly
-words defined at 0,128 0,65 ok
+word defined at 0,44 ok
  ok
 code next function () {
-  compileCode('(next)',dStk.pop())
+  compileCode('(next)',dataStack.pop())
 } end-code compileOnly immediate
-words defined at 0,129 0,66 ok
+word defined at 0,45 ok
  ok
 code r@ function () {
-  dStk.push(rStk[rStk.length-1])
+  dataStack.push(returnStack[returnStack.length-1])
 } end-code
-words defined at 0,130 0,52 ok
+word defined at 0,46 ok
  ok
 code doLit function(){// 定義 指令 doLit ( -- n ) 將 隨後內碼 n 放上堆疊
   var n=compiledCode[ip++]	// 取 ip 所指 內碼 n
-  dStk.push(n)			// 將 n 放上堆疊
+  dataStack.push(n)			// 將 n 放上堆疊
 } end-code compileOnly		// 使 doLit 在高階編譯狀態 才編碼
-words defined at 0,131 0,104 0,24 ok
+words defined at 0,47 0,20 ok
 code + function(){
-  var x=dStk.pop(); dStk[dStk.length-1]+=x
+  var x=dataStack.pop(); dataStack[dataStack.length-1]+=x
 } end-code
-words defined at 0,132 0,26 0,7 0,5 ok
+words defined at 0,48 0,5 ok
  ok
 code - function(){
-  var x=dStk.pop(); dStk[dStk.length-1]-=x
+  var x=dataStack.pop(); dataStack[dataStack.length-1]-=x
 } end-code
-words defined at 0,133 0,27 0,9 ok
+word defined at 0,49 ok
  ok
 code * function(){
-  var x=dStk.pop(); dStk[dStk.length-1]*=x
+  var x=dataStack.pop(); dataStack[dataStack.length-1]*=x
 } end-code
-words defined at 0,134 0,28 0,10 ok
+word defined at 0,50 ok
  ok
 code $" function(){// 定義 $"  取源碼字串直到 " (雙引號)
-  var s=nxtTkn('"')
+  var s=nextToken('"')
   if (compiling) compileCode('doLit',s)
-  else dStk.push(s)
+  else dataStack.push(s)
 } end-code immediate
-words defined at 0,135 0,90 0,8 ok
+word defined at 0,51 ok
  ok
 code . function(){// 定義 . ( n -- ) 印出 堆頂 數字 或 字串
-  print(' '+dStk.pop())
+  print(' '+dataStack.pop())
 } end-code
-words defined at 0,136 0,31 0,6 0,4 ok
+words defined at 0,52 0,6 0,4 ok
  ok
 code (.) function(){// 定義 (.) 列印 隨後內碼
   print(compiledCode[ip++])
 } end-code compileOnly
-word defined at 0,137 ok
+word defined at 0,53 ok
  ok
 code ." function(){// 定義 ." 列印源碼字串直到 " (雙引號)
-  var s=nxtTkn('"')
+  var s=nextToken('"')
   if (compiling)
      compileCode('(.)',s)
   else print(s)
 } end-code immediate
-words defined at 0,138 0,56 ok
+word defined at 0,54 ok
  ok
 code cr function(){// 定義 cr 印出 列尾
   print('\n')
 } end-code
-words defined at 0,139 0,58 ok
+word defined at 0,55 ok
  ok
 // //////////////////////////////////////////////////////////////////////// ok
 code debug function(){ //( <指令名稱> -- )// 追加 隨後指令名稱 到 待追蹤陣列
-  while(token=nxtTkn()){
-    if (z=fndWrd(token)){
+  while(token=nextToken()){
+    if (z=findWord(token)){
        debugged.push(z)
        print('\nadd '+token+' to debugged')
     } else
        showErr('\n'+token+' undefined to debug')
   }
 } end-code
-words defined at 0,140 0,96 0,17 ok
+words defined at 0,56 0,12 ok
  ok
 code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨後指令名稱
-  while(token=nxtTkn()){ var i
+  while(token=nextToken()){ var i
     if (i=debugged.indexOf(token)) {
        debugged=debugged.slice(0,i).concat(debugged.slice(i+1))
        print('\nremove '+token+' from debugged')
@@ -1166,4 +516,4 @@ code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨�
        showErr('\n'+token+' not in debbuged')
   }
 } end-code
-word defined at 0,141 ok
+word defined at 0,57 ok

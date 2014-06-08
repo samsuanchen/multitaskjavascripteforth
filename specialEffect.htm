@@ -63,7 +63,7 @@
         <input id="directOut" type="checkbox">directOut
         <textarea id="preload" hidden>
 code immediate function(){// 定義 指令 immediate		( -- )
-  lstWrd.immediate=1			// 使 最後定義的指令 在高階編譯狀態 能執行
+  lastWord.immediate=1			// 使 最後定義的指令 在高階編譯狀態 能執行
 } end-code
 code // function(){ var n,t// 定義 指令 // (雙斜線) 忽略源碼字串到 列尾
   iTib += (n= (t=tib.substr(iTib)).indexOf('\n') )>=0 ? n : t.length
@@ -72,21 +72,21 @@ code // function(){ var n,t// 定義 指令 // (雙斜線) 忽略源碼字串到
 code : function(){// 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
   src		= ''			// 高階指令 源碼
   hSrc		= iTib-2		// 高階指令 源碼字串起點
-  hName		= nxtTkn()		// 高階指令 名稱
+  hName		= nextToken()		// 高階指令 名稱
   hXt		= compiledCode.length 	// 高階指令 編碼起點
   compiling	= 1			// 高階指令 編譯狀態 進入
 } end-code
 code compileOnly function(){// 定義 指令 compileOnly	( -- )
-  lstWrd.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
+  lastWord.compileOnly=1			// 使 最後定義的指令 在高階編譯狀態 才執行
 } end-code
 code ret function(){// 定義 指令 ret ( -- ) 結束被呼叫的 高階指令
-  ip=rStk.pop()				// 從 return stack 取出 ip
+  ip=returnStack.pop()				// 從 return stack 取出 ip
 } end-code compileOnly			// 使 ret 在高階編譯狀態 才編碼
 code ; function () {			// 定義 指令 ; ( -- ) 結束 高階指令的定義
   compileCode("ret")			// 編譯 ret 為 高階指令 內碼
   compiling=0				// 高階指令 編譯狀態 結束
   var src=tib.substring(hSrc,iTib)	// 源碼字串
-  newWrd(hName,hXt,src)			// 以 名稱 內碼起點 原碼字串 定義 高階指令
+  newWord(hName,hXt,src)			// 以 名稱 內碼起點 原碼字串 定義 高階指令
 } end-code compileOnly immediate	// 使 ; 在高階編譯狀態 才編碼 能執行
 // ////////////////////////////////////////////////////////////////////////
 code directOut function(){
@@ -98,14 +98,14 @@ code bufferOut function(){
 code start function(){//( <指令> -- )// 隨後 高階指令 設為要起動的 工作
   time0=new Date()
   directOut.checked=true
-  while(z=fndWrd( nxtTkn() )) { 	// 搜尋指令位址 z
-    tsks.push(z)
-    var w=zWrd(z) 			// 取得指令資訊 w
+  while(z=findWord( nextToken() )) { 	// 搜尋指令位址 z
+    tasks.push(z)
+    var w=zWord(z) 			// 取得指令資訊 w
     if (w.src) { 			// 若是 高階指令
        setTimeout(eval(
 	  '(function(){resumeTask('+	// 以 resumeTask 為 起動涵式
 	  JSON.stringify({
-	     rStk:[ip],dStk:[],z:z,ip:w.xt// 設定 起動工作 所需資訊
+	     returnStack:[ip],dataStack:[],z:z,ip:w.xt// 設定 起動工作 所需資訊
 	  })+')})'
        ),10), waiting=1			// 10 毫秒後起動
        if (tracing)			// 若要顯示 追蹤檢視資訊
@@ -120,12 +120,12 @@ code function ms(n){
   setTimeout(eval(
      '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
      JSON.stringify({
-        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+        returnStack:returnStack,dataStack:dataStack,z:z,ip:ip	// 設定 接續工作 所需資訊
      })+')})'
   ),n), waiting=1			// n 毫秒後起動
   if (tracing)				// 若要顯示 追蹤檢視資訊
      print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
-          +z+' '+zWrd(z).name+' '+ip+' after '+n+' ms')
+          +z+' '+zWord(z).name+' '+ip+' after '+n+' ms')
 } end-code
 code function resumeAt(t){
   n = t-(new Date()-time0)
@@ -133,24 +133,24 @@ code function resumeAt(t){
   setTimeout(eval(
      '(function(){resumeTask('+		// 以 resumeTask 為 起動涵式
      JSON.stringify({
-        rStk:rStk,dStk:dStk,z:z,ip:ip	// 設定 接續工作 所需資訊
+        returnStack:returnStack,dataStack:dataStack,z:z,ip:ip	// 設定 接續工作 所需資訊
      })+')})'
   ),n), waiting=1			// n 毫秒後起動
   if (tracing)				// 若要顯示 追蹤檢視資訊
      print('\n'+digits(new Date()-time0,6)+' set to resumeTask '
-          +z+' '+zWrd(z).name+' '+ip+' at '+t+' ms')
+          +z+' '+zWord(z).name+' '+ip+' at '+t+' ms')
 } end-code
 code (resumeAt) function(){ //( t -- )
-  VM.resumeAt( dStk.pop() )
+  VM.resumeAt( dataStack.pop() )
 } end-code compileOnly
 code resumeAt function(){ //( t -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
   if (compiling) {			// 若是 編議狀態
      compileCode('(resumeAt)',		// 將 (ms) 編為內碼
         current+','+
-        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+        vocs[current].words.length	// 當前正定義的指令 隨後 也編為內碼
      ); return
   }
-  var n=dStk.pop()-( new Date()-time0 )	// 從 堆頂 取出 t 計算 n
+  var n=dataStack.pop()-( new Date()-time0 )	// 從 堆頂 取出 t 計算 n
   setTimeout(eval(
      '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
      iTib+')})'				// 設定 接續工作 源碼位址
@@ -160,16 +160,16 @@ code resumeAt function(){ //( t -- )// 暫停工作 (n 毫秒後接續執行 iTi
           +iTib+' after '+n+' ms')
 } end-code immediate
 code (ms) function(){ //( n -- )// 暫停工作 (n 毫秒後 接續執行 ip 所指 隨後內碼)
-  VM.ms( dStk.pop() )
+  VM.ms( dataStack.pop() )
 } end-code compileOnly
 code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所指 隨後源碼)
   if (compiling) {			// 若是 編議狀態
      compileCode('(ms)',		// 將 (ms) 編為內碼
         current+','+
-        vocs[current].wrds.length	// 當前正定義的指令 隨後 也編為內碼
+        vocs[current].words.length	// 當前正定義的指令 隨後 也編為內碼
      ); return
   }
-  var n=dStk.pop()			// 從 堆頂 取出 n
+  var n=dataStack.pop()			// 從 堆頂 取出 n
   setTimeout(eval(
      '(function(){resumeExec('+		// 以 resumeExec 為 起動涵式
      iTib+')})'				// 設定 接續工作 源碼位址
@@ -180,49 +180,49 @@ code ms function(){ //( n -- )// 暫停工作 (n 毫秒後接續執行 iTib 所�
 } end-code immediate
 // ////////////////////////////////////////////////////////////////////////
 code (for) function(){
-  rStk.push(dStk.pop())
+  returnStack.push(dataStack.pop())
 } end-code
 code for function(){
-  compileCode('(for)'), dStk.push(compiledCode.length)
+  compileCode('(for)'), dataStack.push(compiledCode.length)
 } end-code compileOnly immediate
 code (next) function () {
-  if ( 0 > (--rStk[rStk.length-1]) )
-     ip++, rStk.length--
+  if ( 0 > (--returnStack[returnStack.length-1]) )
+     ip++, returnStack.length--
   else
      ip=compiledCode[ip]
 } end-code compileOnly
 code next function () {
-  compileCode('(next)',dStk.pop())
+  compileCode('(next)',dataStack.pop())
 } end-code compileOnly immediate
 code r@ function () {
-  dStk.push(rStk[rStk.length-1])
+  dataStack.push(returnStack[returnStack.length-1])
 } end-code
 code doLit function(){// 定義 指令 doLit ( -- n ) 將 隨後內碼 n 放上堆疊
   var n=compiledCode[ip++]	// 取 ip 所指 內碼 n
-  dStk.push(n)			// 將 n 放上堆疊
+  dataStack.push(n)			// 將 n 放上堆疊
 } end-code compileOnly		// 使 doLit 在高階編譯狀態 才編碼
 code + function(){
-  var x=dStk.pop(); dStk[dStk.length-1]+=x
+  var x=dataStack.pop(); dataStack[dataStack.length-1]+=x
 } end-code
 code - function(){
-  var x=dStk.pop(); dStk[dStk.length-1]-=x
+  var x=dataStack.pop(); dataStack[dataStack.length-1]-=x
 } end-code
 code * function(){
-  var x=dStk.pop(); dStk[dStk.length-1]*=x
+  var x=dataStack.pop(); dataStack[dataStack.length-1]*=x
 } end-code
 code $" function(){// 定義 $"  取源碼字串直到 " (雙引號)
-  var s=nxtTkn('"')
+  var s=nextToken('"')
   if (compiling) compileCode('doLit',s)
-  else dStk.push(s)
+  else dataStack.push(s)
 } end-code immediate
 code . function(){// 定義 . ( n -- ) 印出 堆頂 數字 或 字串
-  print(' '+dStk.pop())
+  print(' '+dataStack.pop())
 } end-code
 code (.) function(){// 定義 (.) 列印 隨後內碼
   print(compiledCode[ip++])
 } end-code compileOnly
 code ." function(){// 定義 ." 列印源碼字串直到 " (雙引號)
-  var s=nxtTkn('"')
+  var s=nextToken('"')
   if (compiling)
      compileCode('(.)',s)
   else print(s)
@@ -232,8 +232,8 @@ code cr function(){// 定義 cr 印出 列尾
 } end-code
 // ////////////////////////////////////////////////////////////////////////
 code debug function(){ //( <指令名稱> -- )// 追加 隨後指令名稱 到 待追蹤陣列
-  while(token=nxtTkn()){
-    if (z=fndWrd(token)){
+  while(token=nextToken()){
+    if (z=findWord(token)){
        debugged.push(z)
        print('\nadd '+token+' to debugged')
     } else
@@ -241,7 +241,7 @@ code debug function(){ //( <指令名稱> -- )// 追加 隨後指令名稱 到 �
   }
 } end-code
 code unbug function(){//( <指令名稱> -- )	// 從 待追蹤陣列 刪除 隨後指令名稱
-  while(token=nxtTkn()){ var i
+  while(token=nextToken()){ var i
     if (i=debugged.indexOf(token)) {
        debugged=debugged.slice(0,i).concat(debugged.slice(i+1))
        print('\nremove '+token+' from debugged')
@@ -673,7 +673,7 @@ start a1 a2 a3</textarea>
 			    if (n) {								//
 					var r=applyEffect(n,1), t
 					t='code '+n+' function(){\n'
-					+'var o=dStk.pop()||iElem, e=effect["'+n+'"]\n'
+					+'var o=dataStack.pop()||iElem, e=effect["'+n+'"]\n'
 					+'var elem=(Array.isArray(o)?o:[o]).map(function(x){\n'
 					+"\treturn '\"elem'+x+'\"'\n"
 					+'}).join()\n'
@@ -689,12 +689,12 @@ start a1 a2 a3</textarea>
 		}																					//
 		makeWords(group1), makeWords(group2)	/* 兩組特效自動產生中文指令	*/				//
 		VM.exec("code ms function() {													\n"+//
-		"	setTimeout(resumeExec,dStk.pop()), waiting=1 // 取堆疊毫秒數設定後 暫停工作	\n"+//
+		"	setTimeout(resumeExec,dataStack.pop()), waiting=1 // 取堆疊毫秒數設定後 暫停工作	\n"+//
 		"} end-code																	  	  ")//
 		VM.exec(preload.value)
 		buf=''
 		var i=0, v=JSON.parse(VM.getVocs())																//
-		var w=v[0].wrds.map(function(w){													//
+		var w=v[0].words.map(function(w){													//
 			return w?((++i)+'.'+w.name):''													//
 		})																					//
 		output.innerHTML+='(下列 '+(w.length-1)+' 指令 可用於 執行)<br>'+w.join(' ')+'<br>'					//

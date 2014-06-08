@@ -20,8 +20,8 @@ VM.type=function(x){
 		clrBuf()
 }
 VM.directOut={} // VM.tagging=1
-VM.exec('code . function(){ print(" "+dStk.pop()) }end-code\n'+
-		 'code + function(){ var x=dStk.pop(); dStk[dStk.length-1]+=x }end-code')
+VM.exec('code . function(){ print(" "+dataStack.pop()) }end-code\n'+
+		 'code + function(){ var x=dataStack.pop(); dataStack[dataStack.length-1]+=x }end-code')
 VM.exec('2 3 4 + + .')
 var dir=typeof nwDispatcher==='object'?'..':'.'
 VM.exec(fs.readFileSync(dir+'/topics/basic01'		).toString())
