@@ -25,10 +25,10 @@
 			VM.tagging=chkTag.checked						// get the checkbox value
 		}
 		var evalCode=function(){						//-- evaluate source code for jeForth VM --//
-			VM.exec(code.value)
+			VM.exec(code.textContent)
 		}
 		var evalTest=function(){						//-- evaluate test command for jeForth VM --//
-			VM.exec(test.value)
+			VM.exec(test.textContent)
 		}
 	</script>
 </head><body onload='init()'>
@@ -37,14 +37,14 @@
 	<button onclick="requireJeForthVM(),init()">requireJeForthVM</button>
 	<textarea id='code'>
 code 印出 function(){	//++ jeforth_word . ( n -- )
-  type(' '+dStk.pop())	// pop n from stack and type it
+  type(' '+dataStack.pop())	// pop n from stack and type it
 } end-code
 code 加 function(){	//++ jeforth_word + ( a b -- a+b )
-  var b=dStk.pop()	// pop b from stack
-  dStk[dStk.length-1]+=b// add b to top of stack
+  var b=dataStack.pop()	// pop b from stack
+  dataStack[dataStack.length-1]+=b// add b to top of stack
 } end-code
 code 字串 function(){	//++ jeforth_word token ( -- t )
-  dStk.push(nxtTkn())	// push next token to stack
+  dataStack.push(nextToken())	// push next token to stack
 } end-code</textarea><br>
 	<button onclick="evalTest()">evaluate</button>	<!-- btnEvalTest  -->
 	the following test cmds for new jeforth words	<!-- testCommands -->

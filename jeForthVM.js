@@ -1,4 +1,4 @@
-// 	jeForthVm.js	2012/04/16 ~ 2014/05/23
+// 	jeForthVm.js	2012/04/16 ~ 2014/06/08
 //	YapCheaHshen@gmail.com, SamSuanChen@gmail.com, ChenHanSunDing@gmail.com
 ( function() { 					// anonymous function main
   'uses strict' 				// strict sytax checking for all undefined
@@ -8,21 +8,20 @@
 	this.output		= 0			// <pre id='output'></pre>
 	this.directOut	= 0			// <input id="directOut" type="checkbox">
 	this.tagging	= tagging	// output tagging as <inp>, <ok>, <err>, <wrn>
-	var tagging		= 0
 	var VM			= this
-	var dStk		= []		// data stack for passing data among words
-	var	rStk		= []		// return stack for return from high level calling
+	var tagging		= 0
+	var dataStack	= []		// data stack for passing data among words
+	var	returnStack	= []		// return stack for return from high level calling
 	var time0		= 0			// new Date() as time stampe for easy referencing
 	var functions	= {}		// collection of all js functions defined by code
-	var z			= "0,5"		// vocs[0].wrds[5]
+	var z			= "0,5"		// vocs[0].words[5]
 	var compiledCode= [0]		// compiled code of high level words
 	var	tib			= ""		// source code for processing
 	var iTib		= 0			// offset for source code being processed
-	var tsk0		= {iTib:0,tib:tib,error:0,waiting:0}// outter source interpreter
-	var tsks		= []		// tasks started
-	var tsk						// task
-	var tkn						// token
-	var end_code=/\}\s*end-code/ // pattern of end-code
+	var task0		= {iTib:0,tib:tib,error:0,waiting:0}// outter source interpreter
+	var tasks		= []		// tasks started
+	var task
+	var token
 	var ip			= 0			// point to compiled code during processing
 	var error		= ""		// error message of illegal syntax
 	var compiling	= 0			// state of compiling code for high level definition
@@ -32,22 +31,22 @@
 	var hName		= ""		// name 				 of high level word (being defined)
 	var hXt			= 0			// compiled code pointer of high level word (being defined)
 	var hSrc		= 0			// source   code pointer of high level word (being defined)
-	var lstWrd		= {}		// the last word defined
+	var lastWord	= {}		// the last word defined
 	var debugged	= [0]		// list of v,w being debugged
 	var context		= [0, 0]	// vocabulary ids for searching a given word name
 	var current		= 0			// id of vocabulary for defining new words
 	var root =  { name	: 'root'// the root vocabulary
-			 	, wrds	: [0]	// no words in root yet
+			 	, words	: [0]	// no words in root yet
 				, index	: {}	// no words in root yet
 				}		
 	var vocs		= [root]	// the only vocabulary in vocs
-	var stringifyWrd = function(w){
+	var stringifyWord = function(w){
 		if (w) {
 			var w1={}
 			for (var pw in w) {
 				var wp=w[pw]
-				if (pw==='xt') // each xt function
-					wp=wp.toString()
+				if (pw==='xt')
+					wp=wp.toString() // stringify each xt
 				w1[pw]=wp
 			}
 		} else var w1=0
@@ -57,9 +56,9 @@
 		var v1={}
 		for (var pv in v) {
 			var vp=v[pv]
-			if (pv==='wrds') {
+			if (pv==='words') {
 				vp=vp.map(function(w){ // each word
-					return stringifyWrd(w)
+					return stringifyWord(w)
 				})
 			}
 			v1[pv]=vp
@@ -75,7 +74,7 @@
 	var setVocs = function(vs){
 		vs=JSON.parse(vs)
 		for(var i=0; i<vs.length; i++) {
-			var v=vs[i], ws=v.wrds // each voc
+			var v=vs[i], ws=v.words // each voc
 			for(var j=1; j<ws.length; j++) {
 				w=ws[j] // each word
 				if (w)
@@ -110,43 +109,43 @@
 		return	'000000000000000000000000000000000000000000000000000000000000000'
 				.substr(0,n-i.length)+i
 	}
-	var zWrd=function (z) {
+	var zWord=function (z) {
 		z=z.split(',').map(function(x){return parseInt(x)})
-		return vocs[z[0]].wrds[z[1]]
+		return vocs[z[0]].words[z[1]]
 	}
-	var reset	=function (   ) { error = 1, dStk = [], rStk = [] }
+	var reset	=function (   ) { error = 1, dataStack = [], returnStack = [] }
 	var type	=function (msg) { if (VM.type && msg) VM.type(msg) }
-	var txtCnv	=function (txt) {
+	var textConv=function (text) {
 		if (VM.output)
-			txt=txt.toString().replace(/</g,'&lt;')
-		return txt 
+			text=text.toString().replace(/</g,'&lt;')
+		return text 
 	}
 	var cr		=function (   ) { type("\n"					) }
-	var print	=function (txt) { type(			txtCnv(txt)	) }
-	var shwOk	=function (txt) { type(tagging?
-		( '<ok>' + txtCnv(txt) + '</ok>'	) : txtCnv(txt)	) }
-	var shwInp	=function (txt) { type(tagging?
-		( '<inp>'+ txtCnv(txt) + '</inp>'	) : txtCnv(txt)	) }
-	var shwWrn	=function (txt) { type(tagging?
-		( '<wrn>'+ txtCnv(txt) + '</wrn>'	) : txtCnv(txt)	) }
-	var shwErr	=function (txt) { type(tagging?
-		( '<err>'+ txtCnv(txt) + '</err>'	) : txtCnv(txt)	) }
+	var print	=function (text) { type(			textConv(text)	) }
+	var showOk	=function (text) { type(tagging?
+		( '<ok>' + textConv(text) + '</ok>'	) : textConv(text)	) }
+	var showInput	=function (text) { type(tagging?
+		( '<inp>'+ textConv(text) + '</inp>'	) : textConv(text)	) }
+	var showWarning	=function (text) { type(tagging?
+		( '<wrn>'+ textConv(text) + '</wrn>'	) : textConv(text)	) }
+	var showError	=function (text) { type(tagging?
+		( '<err>'+ textConv(text) + '</err>'	) : textConv(text)	) }
 	var abort	=function (msg) { var m, O, S, p
 		if (compiling) {
 			compiling = 0
 			msg += '\nWhile defining high level word "' + hName +'"'
 		} else {
-			m = msg.match(/Unexpected tkn (.+)/)
+			m = msg.match(/Unexpected token (.+)/)
 			if (m) {
-				msg += '\nWhile coding low level word "' + tkn +'"'
+				msg += '\nWhile coding low level word "' + token +'"'
 				//////////////////////////////////////////////////////////
 				O = VM.out || VM.output.innerHTML						//
 				O = O.split(/\n<inp>\s*code /)							// split output
 				S = O[O.length-1]										// the source code
-				p = RegExp(m[1].replace(/[\][(){}.+*?]/g, function(m){	// pattern for tkn
+				p = RegExp(m[1].replace(/[\][(){}.+*?]/g, function(m){	// pattern for token
 					return '\\'+m										// 
 				}),'g')													//
-				O[O.length-1] = S.replace(p,function(t) {				// highlight tkn
+				O[O.length-1] = S.replace(p,function(t) {				// highlight token
 					return '<err>' +  t.replace(/</g,'&lt;') + '</err>'	//
 				})														//
 				O = O.join('\n<inp>code ')								// join output
@@ -154,53 +153,53 @@
 				else VM.output.innerHTML = O							// update output
 				//////////////////////////////////////////////////////////
 		}	}
-		shwErr('\n' + msg + '\n'); reset()
+		showError('\n' + msg + '\n'); reset()
 		if (!VM.type) alert(msg)
 		error=msg
 	}
-	var ignWhtSpc=function () { var c
+	var ignoreWhiteSpace=function () { var c
 		while ((c=tib.charAt(iTib))==='\t'||c===' ') iTib++
 	}
-	var nxtTkn=function (deli) { var i, m
-	 	tkn = tib.substr(iTib)
+	var nextToken=function (deli) { var i, m
+	 	token = tib.substr(iTib)
 		if (deli) {
-			tkn = tkn.substr(1)
-			if ((i = tkn.indexOf(deli))>=0) {
-				tkn = tkn.substr(0,i)
+			token = token.substr(1)
+			if ((i = token.indexOf(deli))>=0) {
+				token = token.substr(0,i)
 				iTib += deli.length+1
 			}
 		} else {
-			ignWhtSpc()
-			tkn = tib.substr(iTib)
-			tkn=(m=tkn.match(/^\S+/))?m[0]:''
+			ignoreWhiteSpace()
+			token = tib.substr(iTib)
+			token=(m=token.match(/^\S+/))?m[0]:''
 		}
-		iTib += tkn.length
-		return tkn
+		iTib += token.length
+		return token
 	}
 	var compile=function (x) { compiledCode.push(x) }	// compile x (could be any thing)
 	var compileCode=function (z, n) {		// compile a forth word (given index or name)
 	    if (typeof z === "string" && !z.match(/^\d+,\d+$/)) {
 			var name = z
-			z = fndWrd(name)
+			z = findWord(name)
 			if (!z) { 
-				abort('"'+name+'" undefined for tkn "'+tkn+'"')
+				abort('"'+name+'" undefined for token "'+token+'"')
 				return
 		}	}
 		compile(z)
 		if (n !== undefined) compile(n) 	// n could be 0
 	}
-	function parseNums (tkn) { var n
-		return tkn.split(',').map(function(t){
+	function parseNums (token) { var n
+		return token.split(',').map(function(t){
 			return parseNum(t)
 		})
 	}
-	var parseNum=function (tkn) { var n
-		if ( tkn.match(/^\$[0-9A-Fa-f]+$/) )
-			n = parseInt(tkn.substr(1), 16)	// hex number of leading $
+	var parseNum=function (token) { var n
+		if ( token.match(/^\$[0-9A-Fa-f]+$/) )
+			n = parseInt(token.substr(1), 16)	// hex number of leading $
 		else if (base !== 10)		
-			n = parseInt(tkn, base)			// non-decimal number
-		else if (! isNaN(tkn))
-			n = parseFloat(tkn)				// decimal floating
+			n = parseInt(token, base)			// non-decimal number
+		else if (! isNaN(token))
+			n = parseFloat(token)				// decimal floating
 		return n							// n could be undefined
 	}
 	var at=function (t,p){
@@ -209,13 +208,13 @@
 		return i
 	}
 	var deCompile=function (z) {
-		var w=zWrd(z), name=w.name, src=w.src
+		var w=zWord(z), name=w.name, src=w.src
 		src = src || 'code ' + name + ' ' + w.xt + ' end-code'
 		if (w.compileOnly) src += ' compileOnly'
 		if (w.immediate  ) src += ' immediate'
 		return src
 	}
-	var fndWrd=function(name){ var i, v, v0, ws
+	var findWord=function(name){ var i, v, v0, ws
 		for (i=0; i<context.length; i++) {
 			v=context[i]
 			if (v!==v0) {
@@ -225,22 +224,23 @@
 			v0=v
 		}
 	}
-	var newWrd=function(name,xt,src) { var v, i, ids, n
-		v=vocs[current], i=v.wrds.length
-		v.wrds.push({name:name,xt:xt})
-		lstWrd=v.wrds[i]
+	var newWord=function(name,xt,src) { var v, i, ids, n
+		v=vocs[current], i=v.words.length
+		v.words.push({name:name,xt:xt})
+		lastWord=v.words[i]
 		if (src)
-			lstWrd.src=src
+			lastWord.src=src
 		ids=v.index[name]||[], n=ids.length
 		ids.unshift(i)
-		shwWrn('\nword'+(ids.length>1?'s':'')+' defined at '+ids.map(function(i){
+		showWarning('\nword'+(ids.length>1?'s':'')+' defined at '+ids.map(function(i){
 			return current+','+i
 		}).join(' '))
 		v.index[name]=ids
 	}
+	var end_code = /}\s*end-code/
 	var code = function() { // code ( <name> -- ) define a new word using javascript
-		ignWhtSpc()
-		var name = nxtTkn(), n, d, c, xt, t, x, m, eol
+		ignoreWhiteSpace()
+		var name = nextToken(), n, d, c, xt, t, x, m, eol
 		t = tib.substr(iTib)
 		m=t.match(end_code), n=m?t.indexOf(m[0]):-1
 		if (n+1) {
@@ -248,7 +248,7 @@
 				x=t.substr(n)
 				t=t.substr(eol)
 				eol=at(x,'\n')
-				shwInp(t.substr(0,d+eol))
+				showInput(t.substr(0,d+eol))
 			}
 			c = tib.substr(iTib, n+1)
 			if (name === 'function') {
@@ -256,76 +256,76 @@
 				try {
 					functions[name]=eval('VM.'+name+'=function '+c)	// js function
 					if(typeof(functions[name])==='function')
-						shwWrn('\njavascript function '+c.match(/^\s+(\S+\s*\(\S*\))/)[1]+' defined')
+						showWarning('\njavascript function '+c.match(/^\s+(\S+\s*\(\S*\))/)[1]+' defined')
 				} catch(e) {
 					abort(e)
 				}
 			} else { 
-				newWrd(name,eval('('+c+')'))	// low level word
+				newWord(name,eval('('+c+')'))	// low level word
 			}
 			iTib += n + m[0].length
 		} else abort('"code ' + name + '" sould be ended with "end-code"')
 	}
-	var zExe=function (z) { var w
+	var zExecute=function (z) { var w
 		if (debugged.indexOf(z)>0)
 			dbg(z)
-		w=zWrd(z)
+		w=zWord(z)
 		try { execute(w.xt) }					// execute word
 		catch(e) { 
 			abort('Abort at word "' + w.name + '", because ' + e.message)	// error in javascript
 		}
 	}
 	var endProcess=function () {				// process source code
-		if (!compiling) shwOk(' ok')				// shw ok
+		if (!compiling) showOk(' ok')				// show ok
 		cr()
 		if (VM.out) {							// if output buffer not empty
-			VM.output.innerHTML += VM.out, VM.out=''	// shw output and scroll up
+			VM.output.innerHTML += VM.out, VM.out=''	// show output and scroll up
 			VM.output.scrollTop = VM.output.scrollHeight
 		}
 	}
-	var shwNextInpLine=function() { var t
+	var showNextInputLine=function() { var t
 		t=tib.substr(iTib)
 		if (!t) return
 		t=t.substr(0,eol=at(t,'\n'))
-		shwInp(t)
+		showInput(t)
 	}
 	var resumeExec=function (it) { var t, z, v, i, w
 		if (it)
 			print('\n'+digits(new Date()-time0,6)+' resumeExec at '+it)
 		waiting = 0
 		do {
-			while(tkn = nxtTkn()){					// get tkn
-				if (!tkn)							// end of line or end of tib
+			while(token = nextToken()){					// get token
+				if (!token)							// end of line or end of tib
 					break
-				if (z = fndWrd(tkn)) {				// search word for id in context vocs
-					w=zWrd(z)						// get word
+				if (z = findWord(token)) {				// search word for id in context vocs
+					w=zWord(z)						// get word
 					if (w.compileOnly && ! compiling)
 						abort('"' + w.name + '" compileOnly')
 					else if (compiling && ! w.immediate)
 						compile(z) 					// compile word
 					else
-						zExe(z)						// execute word
+						zExecute(z)						// execute word
 				} else {
-					n = tkn.indexOf(',')>0 ? parseNums(tkn) : parseNum(tkn)
+					n = token.indexOf(',')>0 ? parseNums(token) : parseNum(token)
 					if (n === undefined)			// n could be 0
-						abort('"' + tkn + '" undefined')
+						abort('"' + token + '" undefined')
 					else {
 						if (compiling)
 							compileCode("doLit", n)	// compile number
 						else
-							dStk.push(n) 			// push number
+							dataStack.push(n) 			// push number
 					}
 				}
 				if (error || waiting) break
 			}										// end of line, end of tib, error, or waiting
 			if (error || waiting) break
 			if (!compiling && !error && !it)
-				shwOk(' ok')
+				showOk(' ok')
 			cr()
 			if (tib.substr(iTib))
 				iTib++
 			if (tib.substr(iTib))
-				shwNextInpLine()
+				showNextInputLine()
 		} while (tib.substr(iTib))					// error, or waiting
 	}
 	var exec =function (cmds) {	// outer source code interpreter
@@ -334,26 +334,26 @@
 			error=0, context=[0,0], current=0
 		}
 		tagging=this.tagging
-		tib=tsk0.tib=cmds.replace(/\s+$/,''), iTib=tsk0.iTib=0
-		dStk=tsk0.dStk=[], rStk=tsk0.rStk=[]
-		shwNextInpLine()
+		tib=task0.tib=cmds.replace(/\s+$/,''), iTib=task0.iTib=0
+		dataStack=task0.dataStack=[], returnStack=task0.returnStack=[]
+		showNextInputLine()
 		resumeExec()
 	}
 	var dbg =function (z) {	// this word dbg is just for debugging
 		var msg, i, t
-		if (!z && (t=nxtTkn())) {
-			if (t && !(z=fndWrd(t)))
+		if (!z && (t=nextToken())) {
+			if (t && !(z=findWord(t)))
 				abort('\ dbg '+t+' undefined')
 			else {
-				dbg(z), zExe(z)
+				dbg(z), zExecute(z)
 			}
 			return
 		}
 		if (!z) { t=tib.substr(iTib) // z undefined
-			msg = '\nshwing ' + deCompile([current,vocs[current].wrds.length-1])
+			msg = '\nshowing ' + deCompile([current,vocs[current].words.length-1])
 				+ ( (i=t.indexOf('\n'))<0?t:t.substr(0,i) )
-				+ '\ndStk '	   + (dStk.length ? dStk.join(' ') : 'empty')
-			shwWrn(msg)
+				+ '\ndataStack '	   + (dataStack.length ? dataStack.join(' ') : 'empty')
+			showWarning(msg)
 			//*** set break point BP0 here ***//
 			console.log(msg)	// VM will pause if dbg alone is executed
 			return
@@ -365,10 +365,10 @@
 				VM.output.innerHTML+=VM.out, VM.out=''
 				VM.output.scrollTop = VM.output.scrollHeight
 			}
-			msg = '\n'+digits(new Date()-time0,6)+' tracing '+z+' '+zWrd(z).name
-				+ '  dStk: '	    + (dStk.length ? dStk.join(' ') : 'empty')
-				+ '  rStk: '	    + (rStk.length ? rStk.join(' ') : 'empty')
-			shwWrn(msg)
+			msg = '\n'+digits(new Date()-time0,6)+' tracing '+z+' '+zWord(z).name
+				+ '  dataStack: '	    + (  dataStack.length ?   dataStack.join(' ') : 'empty')
+				+ '  returnStack: '	    + (returnStack.length ? returnStack.join(' ') : 'empty')
+			showWarning(msg)
 			//*** break point BP1 ***//
 			console.log(msg)	// VM will pause if any words in debugged list is executed
 	}
@@ -378,58 +378,58 @@
 		else
 			xt()		// execute low  level javascript function xt
 	}
-	var switchToTask=function(tsk) {
-		tsk0.ip=ip, tsk0.rStk=rStk, tsk0.dStk=dStk, tsk0.z=z
-		ip =tsk.ip, rStk =tsk.rStk, dStk =tsk.dStk, z =tsk.z
+	var switchToTask=function(task) {
+		task0.ip=ip, task0.returnStack=returnStack, task0.dataStack=dataStack, task0.z=z
+		ip =task.ip, returnStack =task.returnStack, dataStack =task.dataStack, z =task.z
 	}
-	var returnFromTask=function(tsk) {
-		tsk.ip =ip, tsk.rStk =rStk, tsk.dStk =dStk, tsk.z =z
-		ip=tsk0.ip, rStk=tsk0.rStk, dStk=tsk0.dStk, z=tsk0.z
+	var returnFromTask=function(task) {
+		task.ip =ip, task.returnStack =returnStack, task.dataStack =dataStack, task.z =z
+		ip=task0.ip, returnStack=task0.returnStack, dataStack=task0.dataStack, z=task0.z
 	}
-	var resumeTask=function (tsk) {
+	var resumeTask=function (task) {
 		waiting=0
-		if (tsk) {
-			var z=tsk.z
+		if (task) {
+			var z=task.z
 			if (tracing)
 				print('\n'+
 					digits(new Date()-time0,6)+
 					' resumeTask '+z+' '+
-					zWrd(z).name+' '+tsk.ip+' '
+					zWord(z).name+' '+task.ip+' '
 				)
-			switchToTask(tsk)
+			switchToTask(task)
 		}
 		resumeCall()
-		if (tsk) {
-			if (!rStk.length)		// normal end of inner loop 
-			    rmTsk(tsk)			// remove from task waiting list
-			returnFromTask(tsk)
+		if (task) {
+			if (!returnStack.length)		// normal end of inner loop 
+			    rmTsk(task)			// remove from task waiting list
+			returnFromTask(task)
 		}
 	}
-	var rmTsk=function (tsk) {		// remove task
-		var z=tsk.z, i				// get z (task id)
+	var rmTsk=function (task) {		// remove task
+		var z=task.z, i				// get z (task id)
 		if (tracing)				// show info
-			print('\n'+digits(new Date()-time0,6)+' resumeTask '+z+' '+zWrd(z).name+' done ')
-		if ((i=tsks.indexOf(z))>=0)	// if z in task list
-			tsks.splice(i,1)		// remove z from task list
-		if (!tsks.length)			// if no more task in list
+			print('\n'+digits(new Date()-time0,6)+' resumeTask '+z+' '+zWord(z).name+' done ')
+		if ((i=tasks.indexOf(z))>=0)	// if z in task list
+			tasks.splice(i,1)		// remove z from task list
+		if (!tasks.length)			// if no more task in list
 			resumeExec()			// resume outer source code interpreter
 	}
 	var resumeCall=function () {	// inner loop of compiled code interpreting
-		while (rStk.length) {
-			zExe(compiledCode[ip++])// execute compiled code one by one
+		while (returnStack.length) {
+			zExecute(compiledCode[ip++])// execute compiled code one by one
 			if (error||waiting)
 				break				// break if error or need to wait
 		}
 	}
 	var call=function (i) {			// call compiled code at i
-		rStk.push(ip),ip=i,error=0	// switch ip to i
+		returnStack.push(ip),ip=i,error=0	// switch ip to i
 		resumeCall()				// jump into inner loop of compiled code interpreting
 	}
-	newWrd('root'	,function(){
+	newWord('root'	,function(){
 		context[0]=0
 	})
-	newWrd('code'	,code	)
-	newWrd('dbg'	,dbg	)
+	newWord('code'	,code	)
+	newWord('dbg'	,dbg	)
 	VM.exec				= exec				// export source code interpreter
 	VM.getFunctions		= getFunctions
 	VM.setFunctions		= setFunctions

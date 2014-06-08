@@ -59,7 +59,7 @@ code alias function () { // 定義 指令 alias ( 指令位址 <指令別名> --
   if (w.compileOnly) lstWrd.compileOnly	=w.compileOnly	// 在高階編譯狀態 才執行
   if (w.immediate)   lstWrd.immediate	=w.immediate	// 在高階編譯狀態 能執行
   if (w.wrds)        lstWrd.wrds	=w.wrds	// 詞彙指令陣列
-  if (w.dictionary)  lstWrd.dictionary	=w.dictionary	// 詞彙指令索引
+  if (w.index)  lstWrd.index	=w.index	// 詞彙指令索引
 } end-code
 code : function () { // 定義 指令 : ( <指令名稱> -- ) 開始 高階指令的定義
   src		= ''			// 高階指令 源碼
@@ -117,7 +117,7 @@ code wrds function () { // 定義 wrds 檢視 所有 指令名稱 (可能重複)
 wrds // 檢視 所有 指令名稱
 code uniquewrds function () { // 定義 uniquewrds 檢視 所有 指令名稱 (不重複)
   var v=vocs[context[0]], t='\n ', w
-  for(w in v.dictionary)	// 從 dictionary 物件 針對每個指令 w
+  for(w in v.index)	// 從 index 物件 針對每個指令 w
     t+=' '+w			// 採用	空格 區隔
   print(t)			// 列印
 } end-code
@@ -139,9 +139,9 @@ uniquewrds // 檢視 所有 指令名稱 (不重複)
 ' 2sq 同義 平方的2倍
 3 平方的2倍 印出
 code char function () { // 定義 char 取隨後 token 字串的 起首字符
-  var c=nxtTkn().substr(0,1)	// 隨後	token 的 起首字符 c
+  var c=nxtTkn().substr(0,1)	// 隨後	token 的 起首字符
   if(compiling)			// 檢視	是否 編譯狀態
-    compileCode('doLit',c)	// 若是	編譯狀態 就將 doLit 及 c 編碼
+    compileCode('doLit',c)	// 若是	編譯狀態 就將 doLit 及 字符 編碼
   else dStk.push(c)		// 否則	就將 字符 放上堆疊
 } end-code immediate		// 宣告	char 編譯狀態 能執行
 char a .	// 列印	字符 a
@@ -155,7 +155,7 @@ code see function () { // 定義 see 檢視 指定名稱 指令 的定義源碼
     z=z.split(',').map(function(x){return parseInt(x)})
     var v=vocs[z[0]], w=v.wrds[z[1]] // 取其 word
     if (w.src)		// 檢視	高階定義源碼 是否存在
-	msg=':'+w.src	// 若是	輸出字串 用 高階定義源碼
+	msg=w.src	// 若是	輸出字串 用 高階定義源碼
     else
 	msg='code '+name// 否則	字串 接 指令名稱
 	+' '+w.xt	//	字串 接 低階定義源碼
@@ -183,7 +183,7 @@ code abort" function () {
 } end-code compileOnly immediate
 // abort" 1st testing the word abort"
 // : x abort" 2nd testing the word abort" ; x
-code function xxx (x) { // 定義 js function xxx (並非 定義 指令 xxx)
+code function xxx (x) { // 定義 javascript function xxx (並非 定義 指令 xxx)
   print(x+' is running')
 } end-code
 // see xxx	// 檢視 字串 xxx 的定義源碼 ==> undefined
@@ -225,7 +225,7 @@ code ." function () {
 } end-code compileOnly immediate
 code emit function () { // ( charCode -- )
   var p=RegExp(String.fromCharCode(60),g)
-  print( String.fromCharCode(dStk.pop()).replace(p,String.fromCharCode(60)) )
+  print( String.fromCharCode(dStk.pop()).replace(p,'<') )
 } end-code
 code cr function () {
   cr()
