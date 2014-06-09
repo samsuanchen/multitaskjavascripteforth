@@ -1,0 +1,17 @@
+<inp>code assert function(){  var top=dataStack.pop(), sec=dataStack.pop();  if (top!==sec)    abort('sec="'+sec+'" !== top="'+top+'"');} end-code</inp><wrn>
+word defined at 0,4</wrn><ok> ok</ok>
+<inp>code depth function(){  dataStack.push(dataStack.length);} end-code</inp><wrn>
+word defined at 0,5</wrn><ok> ok</ok>
+<inp>123 depth 1 assert</inp><ok> ok</ok>
+<inp>code dup function(){  dataStack.push(dataStack[dataStack.length-1]);} end-code</inp><wrn>
+word defined at 0,6</wrn><ok> ok</ok>
+<inp>code . function(){  type(' '+dataStack.pop());} end-code</inp><wrn>
+word defined at 0,7</wrn><ok> ok</ok>
+<inp>5 . depth 0 assert</inp> 5<ok> ok</ok>
+<inp>code token function(){  dataStack.push(nextToken());} end-code</inp><wrn>
+word defined at 0,8</wrn><ok> ok</ok>
+<inp>token five .</inp> five<ok> ok</ok>
+<inp>code + function(){  var t=dataStack.pop();  dataStack[dataStack.length-1]+=t;} end-code</inp><wrn>
+word defined at 0,9</wrn><ok> ok</ok>
+<inp>2 3 + dup 5 assert .</inp> 5<ok> ok</ok>
+<inp>token abc token def + dup token abcdef assert .</inp> abcdef<ok> ok</ok>

@@ -140,6 +140,7 @@
 				msg += '\nWhile coding low level word "' + token +'"'
 				//////////////////////////////////////////////////////////
 				O = VM.out || VM.output.innerHTML						//
+				if(!O)return											//
 				O = O.split(/\n<inp>\s*code /)							// split output
 				S = O[O.length-1]										// the source code
 				p = RegExp(m[1].replace(/[\][(){}.+*?]/g, function(m){	// pattern for token

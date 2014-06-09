@@ -11,17 +11,6 @@
 <body>
     <h1>jeforthVM.js <strong>相關資源 簡要說明</strong></h1>
 
-<h2>0. <strong>exec(tib)</strong> 外部源碼 解譯 <strong>outer sourceCode interpreter</strong></h2>
-
-<pre><code>    var VM=new jeforthVM()
-    VM.type=function(msg){
-      process.stdout.write(msg)
-    }
-    VM.exec(&#39;code . function(){print(&quot; &quot;+dataStack.pop())}end-code&#39;)
-    VM.exec(&#39;code cr function(){print(&quot;\n&quot;)}end-code&#39;)
-    VM.exec(&#39;5 . cr&#39;)
-</code></pre>
-
 <ol>
 <li><strong>tib</strong> -- 外部源碼 內容 </li>
 <li><strong>iTib</strong> -- 外部源碼 解譯位址</li>
