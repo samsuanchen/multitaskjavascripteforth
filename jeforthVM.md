@@ -1,4 +1,6 @@
 #jeforthVM.js **相關資源 簡要說明**
+
+##0. **exec(tib)** 外部源碼 解譯 **outer sourceCode interpreter**
 1. **tib** -- 外部源碼 內容 
 2. **iTib** -- 外部源碼 解譯位址
 3. **waiting** -- 執意跳出迴圈 (單步 或 多功)

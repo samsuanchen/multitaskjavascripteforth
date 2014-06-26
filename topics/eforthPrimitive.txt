@@ -1,0 +1,82 @@
+' // alias \
+\ eForth 1.0 primitive words. (Bill Muench and C. H. Ting, 1990)
+code doLIT   function(){ // ( --n )		取 隨後編碼 內容 放到 堆疊
+  dataStack.push(compiledCode[ip++]);
+} end-code
+code doLIST  function(){ // ( -- )              無相關對應
+} end-code
+code EXIT    function(){ // ( -- )              結束 編碼 執行 回 上層後續位址
+  ip=returnStack.pop();
+} end-code
+code EXECUTE function(){ // ( z -- )            執行 指令位址 z (指到 詞彙,指令)
+  zExec(dataStack.pop());
+} end-code
+code ?branch function(){ // ( f-- )             若 堆頂 0, 跳到 隨後編碼 指定位址
+  ip=dataStack.pop()?ip++:compiledCode[ip];
+} end-code
+code branch  function(){ // ( -- )              跳到 隨後編碼 指定位址
+  ip=compiledCode[ip];
+} end-code
+code !       function(){ // ( w a-- )           存 w 到 標籤 a 數字或字串 資料位址
+  VM.data=VM.data||{},VM.data[dataStack.pop()]=dataStack.pop();
+} end-code
+code @       function(){ // ( a--w )            從 標籤 a 數字或字串 資料位址 取 w
+  var i=dataStack.length-1;
+  VM.data=VM.data||{},dataStack[i]=VM.data[dataStack[i]];
+} end-code
+code C!      function(){ // ( c b-- )           存 8-bit 資料 c 到 字串位址 b
+  VM.string=VM.string||''; var b=dataStack.pop();
+  while(b>=VM.string.length)VM.string+=String.fromCharCode(0);
+  VM.string[b]=dataStack.pop();
+} end-code
+code C@      function(){ // ( b--c )            從 字串位址 b 取 8-bit 資料 c
+  var i=dataStack.length-1;dataStack[i]=VM.string[dataStack[i]];
+} end-code
+code P!      function(){ // ( w p-- )           無相關對應  
+} end-code
+code P@      function(){ // ( p--w )            無相關對應
+} end-code
+code RP@     function(){ // ( --a )             無相關對應
+} end-code
+code RP!     function(){ // ( a-- )             無相關對應
+} end-code
+code R>      function(){ // ( --w )             回返堆疊 取出 w 放到 資料堆疊
+  dataStack.push(returnStack.pop());
+} end-code
+code R@      function(){ // ( --w )             回返堆疊 取得 w 放到 資料堆疊
+  dataStack.push(returnStack[returnStack.length-1]);
+} end-code
+code >R      function(){ // ( w-- )             資料堆疊 取出 w 放到 回返堆疊
+  returnStack.push(dataStack.pop());
+} end-code
+code SP@     function(){ // ( --a )             無相關對應
+} end-code
+code SP!     function(){ // ( a-- )             無相關對應
+} end-code
+code DROP    function(){ // ( w-- )             資料堆疊 取出 w 丟掉
+  dataStack.length--;
+} end-code
+code DUP     function(){ // ( w--w w )          複製 資料 堆頂首項
+  dataStack.push(dataStack[dataStack.length-1]);
+} end-code
+code SWAP    function(){ // ( w1 w2--w2 w1 )    資料 堆頂 兩項 位置互換
+  var i=dataStack.length, w2=dataStack[--i];
+  dataStack[i]=dataStack[--i], dataStack[i]=w2;
+} end-code
+code OVER    function(){ // ( w1 w2--w1 w2 w1 ) 複製 資料 堆頂次項
+  dataStack.push(dataStack[dataStack.length-2]);
+} end-code
+code 0<      function(){ // ( n--t )            若 n<0, 將 true 放上 堆疊
+  var top=dataStack[dataStack.length-1]; top=top<0;
+} end-code
+code AND     function(){ // ( w1 w2--w )        Bitwise AND
+  var w2=dataStack.pop();dataStack[dataStack.length-1]&=w2;
+} end-code
+code OR      function(){ // ( w1 w2--w )        Bitwise inclusive OR.
+  var w2=dataStack.pop();dataStack[dataStack.length-1]|=w2;
+} end-code
+code XOR     function(){ // ( w1 w2--w )        Bitwise exclusive OR.
+  var w2=dataStack.pop();dataStack[dataStack.length-1]^=w2;
+} end-code
+code UM+     function(){ // ( w1 w2--w cy )     無相關對應
+} end-code

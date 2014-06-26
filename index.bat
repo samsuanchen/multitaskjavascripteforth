@@ -1,1 +1,1 @@
-node index >index.txt
+node index

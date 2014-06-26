@@ -1,0 +1,26 @@
+code assert function(){
+  var top=dataStack.pop(), sec=dataStack.pop();
+  if (top!==sec)
+    abort('sec="'+sec+'" !== top="'+top+'"');
+} end-code
+code depth function(){
+  dataStack.push(dataStack.length);
+} end-code
+123 depth 1 assert
+code dup function(){
+  dataStack.push(dataStack[dataStack.length-1]);
+} end-code
+code . function(){
+  type(' '+dataStack.pop());
+} end-code
+5 . depth 1 assert
+code token function(){
+  dataStack.push(nextToken());
+} end-code
+token five .
+code + function(){
+  var t=dataStack.pop();
+  dataStack[dataStack.length-1]+=t;
+} end-code
+2 3 + dup 5 assert .
+token abc token def + dup token abcdef assert .

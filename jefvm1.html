@@ -3,7 +3,7 @@
 yapcheahshen@gmail.com samsuanchen@gmail.com ChenHanSunDing@gmail.com -->
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Multi Task Javascript eForth</title>
-	<link type="text/css" rel="stylesheet" href="multiTaskJavascriptEforth.css">
+	<link type="text/css" rel="stylesheet" href="jefvm1.css">
 </head><body onload="init()"><center>
 	<table><tr><td>
 	<center><h3>This Javascript <mrk>eForth VM</mrk> initially has only the word "<mrk>code</mrk>"</h3>
@@ -47,7 +47,7 @@ code // function () { var n,t	 // 定義 指令 // (雙斜線) 忽略 源碼字�
 // I 按 F12 (google 瀏覽器網頁追蹤) 進入 javascript 除錯視窗, 到 jeforthVM.js	//
 //   檔尾 dbg function 設斷點, 然後 					//
 //   在 text area 程式碼 插入 dbg 指令 點 evalute, 執行到 dbg 即可進行追蹤除錯	//
-// J 下面 debug 指令 讓 源碼隨後指令 執行前先印出 "debugging" (可到 dbg 設斷點)	//
+// J 下面 debug 指令 讓 隨後源碼指令 執行前印出 "debugging" (可到 dbg 設斷點)	//
 // // // // // // // // // // // // // // // // // // // // // // // //	//
 code debug function() {	// 定義 指令 debug ( <指令名稱> -- )
   var token=nextToken()	// 從 隨後源碼 取 token (以空格區隔的下一個字串)
@@ -65,7 +65,7 @@ code find function () { // 定義 指令 find ( <指令名稱> -- 指令位址 )
 } end-code
 code ' function () { // 定義 指令 ' ( <指令名稱> -- 指令位址 )
   var z, t
-  var z=findWord(t=nextToken())	// 隨後源碼 指令名稱 的 指令位址 z
+  z=findWord(t=nextToken())	// 隨後源碼 指令名稱 的 指令位址 z
   if (z) dataStack.push(z)		// 若找到 z 就放上堆疊
   else abort(t+' not found')	// 否則 就 abort
 } end-code

@@ -2,6 +2,7 @@
 //	YapCheaHshen@gmail.com, SamSuanChen@gmail.com, ChenHanSunDing@gmail.com
 ( function() { 					// anonymous function main
   'uses strict' 				// strict sytax checking for all undefined
+  "use asm";
   if (typeof jeForthVM==='undefined')
   var jeForthVM=function () {	// VM for jeForth
 	this.type		= 0			// function for typing out (the import function)
@@ -11,6 +12,7 @@
 	var VM			= this
 	var tagging		= 0
 	var dataStack	= []		// data stack for passing data among words
+	var rDepth		= 0			// 
 	var	returnStack	= []		// return stack for return from high level calling
 	var time0		= 0			// new Date() as time stampe for easy referencing
 	var functions	= {}		// collection of all js functions defined by code
@@ -18,9 +20,21 @@
 	var compiledCode= [0]		// compiled code of high level words
 	var	tib			= ""		// source code for processing
 	var iTib		= 0			// offset for source code being processed
-	var task0		= {iTib:0,tib:tib,error:0,waiting:0}// outter source interpreter
+	var task0		= {iTib			:0			// for outer source code interpreter
+					  ,tib			:tib
+					  ,error		:0
+					  ,waiting		:0
+					  ,returnStack	:[]
+					  ,dataStack	:[]
+					  }
 	var tasks		= []		// tasks started
-	var task
+	var task		= {ip			:0			// for inner compiled code interpreter
+					  ,compiledCode	:compiledCode
+					  ,error		:0
+					  ,waiting		:0
+					  ,returnStack	:[]
+					  ,dataStack	:[]
+					  }
 	var token
 	var ip			= 0			// point to compiled code during processing
 	var error		= ""		// error message of illegal syntax
@@ -35,44 +49,54 @@
 	var debugged	= [0]		// list of v,w being debugged
 	var context		= [0, 0]	// vocabulary ids for searching a given word name
 	var current		= 0			// id of vocabulary for defining new words
-	var root =  { name	: 'root'// the root vocabulary
+	var root =  { index	: {}	// no words in root yet
+				, name	: 'root'// the root vocabulary
+				, vid	: 0
 			 	, words	: [0]	// no words in root yet
-				, index	: {}	// no words in root yet
+				, xt	: function (){context[0]=0}
 				}		
 	var vocs		= [root]	// the only vocabulary in vocs
-	var stringifyWord = function(w){
+	var stringifyWord = function(w){// to save each word as a string
+		var w1
 		if (w) {
-			var w1={}
-			for (var pw in w) {
-				var wp=w[pw]
-				if (pw==='xt')
-					wp=wp.toString() // stringify each xt
-				w1[pw]=wp
+			w1=[]
+			for (var p in w) {
+				var wp=w[p]
+				if (p==='xt')
+					wp=wp.toString()// stringify each xt (js function or integer)
+				w1.push(JSON.stringify(p)+':'+JSON.stringify(wp))
 			}
-		} else var w1=0
-		return w1
+			w1='{'+w1.join()+'}'
+		}
+		return w1||0
 	}
 	var stringifyVoc = function(v){
-		var v1={}
-		for (var pv in v) {
-			var vp=v[pv]
-			if (pv==='words') {
-				vp=vp.map(function(w){ // each word
-					return stringifyWord(w)
-				})
+		var v1
+		if (v) {
+			v1=[]
+			for (var p in v) {
+				var vp=v[p]
+				if (p==='words') {
+					vp='['+vp.map(function(w){ // each word
+							return stringifyWord(w)
+					}).join()+']'
+				} else if (p==='xt')
+					vp=vp.toString()// stringify each xt (js function or integer)
+				else
+					vp=JSON.stringify(vp)
+				v1.push(JSON.stringify(p)+':'+vp)
 			}
-			v1[pv]=vp
+			v1='{'+v1.join()+'}'
 		}
 		return v1
 	}
 	var getVocs = function(){
-		var vocs1=vocs.map(function(v){
+		return '['+vocs.map(function(v){
 			return stringifyVoc(v)
-		})
-		return JSON.stringify(vocs1)
+		})+']'
 	}
 	var setVocs = function(vs){
-		vs=JSON.parse(vs)
+		vs=eval(vs)
 		for(var i=0; i<vs.length; i++) {
 			var v=vs[i], ws=v.words // each voc
 			for(var j=1; j<ws.length; j++) {
@@ -85,7 +109,7 @@
 		return vs
 	}
 	var getCompiledCode = function(){
-	    return JSON.stringify(compiledCode)
+	    return JSON.stringify(compiledCode) // ????? do we still need JSON.stringify ?????
 	}
 	var setCompiledCode = function(cc){
 		return compiledCode=JSON.parse(cc)
@@ -320,7 +344,7 @@
 				if (error || waiting) break
 			}										// end of line, end of tib, error, or waiting
 			if (error || waiting) break
-			if (!compiling && !error && !it)
+			if (!compiling && !error && !it && !rDepth)
 				showOk(' ok')
 			cr()
 			if (tib.substr(iTib))
@@ -328,16 +352,22 @@
 			if (tib.substr(iTib))
 				showNextInputLine()
 		} while (tib.substr(iTib))					// error, or waiting
+		if (!error) {
+			var x=returnStack.pop()
+			tib=x.tib,iTib=x.iTib,rDepth=x.rDepth
+		}
 	}
-	var exec =function (cmds) {	// outer source code interpreter
+	var exec =function (cmds,noEcho) {	// outer source code interpreter
+		rDepth=returnStack.length
+		returnStack.push({tib:tib,iTib:iTib,rDepth:rDepth})
 		time0=new Date()
 		if (error) {
 			error=0, context=[0,0], current=0
 		}
 		tagging=this.tagging
 		tib=task0.tib=cmds.replace(/\s+$/,''), iTib=task0.iTib=0
-		dataStack=task0.dataStack=[], returnStack=task0.returnStack=[]
-		showNextInputLine()
+		if(!noEcho)
+			showNextInputLine()
 		resumeExec()
 	}
 	var dbg =function (z) {	// this word dbg is just for debugging
@@ -416,14 +446,19 @@
 			resumeExec()			// resume outer source code interpreter
 	}
 	var resumeCall=function () {	// inner loop of compiled code interpreting
-		while (returnStack.length) {
+		while (returnStack.length>rDepth) {
 			zExecute(compiledCode[ip++])// execute compiled code one by one
 			if (error||waiting)
 				break				// break if error or need to wait
 		}
 	}
+	var ret=function(){
+		var x=returnStack.pop()
+		ip=x.ip, rDepth=x.rDepth
+	}
 	var call=function (i) {			// call compiled code at i
-		returnStack.push(ip),ip=i,error=0	// switch ip to i
+		returnStack.push({ip:ip,rDepth:returnStack.length-1})
+		ip=i,rDepth=returnStack.length,error=0	// switch ip to i
 		resumeCall()				// jump into inner loop of compiled code interpreting
 	}
 	newWord('root'	,function(){

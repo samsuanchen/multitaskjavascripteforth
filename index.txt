@@ -1,3 +1,4 @@
+C:\dev2014\multitaskjavascripteforth>node index 
 <inp>code assert function(){  var top=dataStack.pop(), sec=dataStack.pop();  if (top!==sec)    abort('sec="'+sec+'" !== top="'+top+'"');} end-code</inp><wrn>
 word defined at 0,4</wrn><ok> ok</ok>
 <inp>code depth function(){  dataStack.push(dataStack.length);} end-code</inp><wrn>
@@ -7,11 +8,13 @@ word defined at 0,5</wrn><ok> ok</ok>
 word defined at 0,6</wrn><ok> ok</ok>
 <inp>code . function(){  type(' '+dataStack.pop());} end-code</inp><wrn>
 word defined at 0,7</wrn><ok> ok</ok>
-<inp>5 . depth 0 assert</inp> 5<ok> ok</ok>
-<inp>code token function(){  dataStack.push(nextToken());} end-code</inp><wrn>
+<inp>5 . depth 1 assert</inp> 5<err>
+sec="0" !== top="1"
+</err><inp>code token function(){  dataStack.push(nextToken());} end-code</inp><wrn>
 word defined at 0,8</wrn><ok> ok</ok>
 <inp>token five .</inp> five<ok> ok</ok>
 <inp>code + function(){  var t=dataStack.pop();  dataStack[dataStack.length-1]+=t;} end-code</inp><wrn>
 word defined at 0,9</wrn><ok> ok</ok>
 <inp>2 3 + dup 5 assert .</inp> 5<ok> ok</ok>
 <inp>token abc token def + dup token abcdef assert .</inp> abcdef<ok> ok</ok>
+<ok> ok</ok>

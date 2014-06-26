@@ -693,7 +693,7 @@ start a1 a2 a3</textarea>
 		"} end-code																	  	  ")//
 		VM.exec(preload.value)
 		buf=''
-		var i=0, v=JSON.parse(VM.getVocs())																//
+		var i=0, v=eval(VM.getVocs())																//
 		var w=v[0].words.map(function(w){													//
 			return w?((++i)+'.'+w.name):''													//
 		})																					//
