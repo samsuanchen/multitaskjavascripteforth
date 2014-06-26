@@ -358,8 +358,8 @@
 		}
 	}
 	var exec =function (cmds,noEcho) {	// outer source code interpreter
-		rDepth=returnStack.length
 		returnStack.push({tib:tib,iTib:iTib,rDepth:rDepth})
+		rDepth=returnStack.length
 		time0=new Date()
 		if (error) {
 			error=0, context=[0,0], current=0
@@ -454,11 +454,11 @@
 	}
 	var ret=function(){
 		var x=returnStack.pop()
-		ip=x.ip, rDepth=x.rDepth
+		ip=x.ip
 	}
 	var call=function (i) {			// call compiled code at i
-		returnStack.push({ip:ip,rDepth:returnStack.length-1})
-		ip=i,rDepth=returnStack.length,error=0	// switch ip to i
+		returnStack.push({ip:ip})
+		ip=i,error=0	// switch ip to i
 		resumeCall()				// jump into inner loop of compiled code interpreting
 	}
 	newWord('root'	,function(){
