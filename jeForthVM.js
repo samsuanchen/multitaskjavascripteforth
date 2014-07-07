@@ -9,10 +9,10 @@
 	this.output		= 0			// <pre id='output'></pre>
 	this.directOut	= 0			// <input id="directOut" type="checkbox">
 	this.tagging	= tagging	// output tagging as <inp>, <ok>, <err>, <wrn>
-	var VM			= this
-	var tagging		= 0
+	var VM			= this		// local variable to keep this VM
+	var tagging		= 0			// flag to turn on color (red error, blue input, green ok, black)
 	var dataStack	= []		// data stack for passing data among words
-	var rDepth		= 0			// 
+	var rDepth		= 0			// depth of return stack to terminate inner compiled code interpreting
 	var	returnStack	= []		// return stack for return from high level calling
 	var time0		= 0			// new Date() as time stampe for easy referencing
 	var functions	= {}		// collection of all js functions defined by code
@@ -344,7 +344,7 @@
 				if (error || waiting) break
 			}										// end of line, end of tib, error, or waiting
 			if (error || waiting) break
-			if (!compiling && !error && !it && !rDepth)
+			if (!compiling && !error && !it && rDepth===1)
 				showOk(' ok')
 			cr()
 			if (tib.substr(iTib))
@@ -365,7 +365,7 @@
 			error=0, context=[0,0], current=0
 		}
 		tagging=this.tagging
-		tib=task0.tib=cmds.replace(/\s+$/,''), iTib=task0.iTib=0
+		tib=cmds.replace(/\s+$/,''), iTib=0
 		if(!noEcho)
 			showNextInputLine()
 		resumeExec()
@@ -453,11 +453,10 @@
 		}
 	}
 	var ret=function(){
-		var x=returnStack.pop()
-		ip=x.ip
+		ip=returnStack.pop()
 	}
 	var call=function (i) {			// call compiled code at i
-		returnStack.push({ip:ip})
+		returnStack.push(ip)
 		ip=i,error=0	// switch ip to i
 		resumeCall()				// jump into inner loop of compiled code interpreting
 	}
